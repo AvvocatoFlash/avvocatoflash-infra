@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  nginx:
+    image: nginx:stable
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /srv/nginx/conf.d:/etc/nginx/conf.d:ro
+      - /srv/logs/nginx:/var/log/nginx
+    networks:
+      - nginx-net
+
+networks:
+  nginx-net:
+    name: nginx-net
+    driver: bridge
