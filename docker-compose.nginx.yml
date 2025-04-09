@@ -11,8 +11,8 @@ services:
     volumes:
       - /srv/nginx/conf.d:/etc/nginx/conf.d:ro
       - /srv/logs/nginx:/var/log/nginx
-      - /etc/letsencrypt/live/api.avvocatoflash.dev:/etc/nginx/certs:ro
       - /srv/nginx/webroot:/srv/nginx/webroot:ro
+      - /srv/nginx/certs:/etc/nginx/certs:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
