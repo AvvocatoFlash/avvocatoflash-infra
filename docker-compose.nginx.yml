@@ -11,6 +11,8 @@ services:
     volumes:
       - /srv/nginx/conf.d:/etc/nginx/conf.d:ro
       - /srv/logs/nginx:/var/log/nginx
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - nginx-net
 
