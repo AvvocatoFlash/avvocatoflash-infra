@@ -9,12 +9,12 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - /srv/nginx/conf.d:/etc/nginx/conf.d:ro
       - /srv/logs/nginx:/var/log/nginx
+      - /srv/nginx/conf.d:/etc/nginx/conf.d:ro
       - /srv/nginx/webroot:/srv/nginx/webroot:ro
       - /srv/nginx/certs:/etc/nginx/certs:ro
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - "host.docker.internal:172.17.0.1"
     networks:
       - nginx-net
 
