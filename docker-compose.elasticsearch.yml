@@ -7,10 +7,11 @@ services:
     hostname: elasticsearch
     environment:
       - discovery.type=single-node
-      - xpack.security.enabled=false  # No password, perfect for now
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.security.enabled=true
+      - xpack.security.transport.ssl.enabled=false
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}  # 👈 superuser (elastic) password
     volumes:
-      - es-data:/usr/share/elasticsearch/data
+      - /srv/data/elasticsearch:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
     networks:
@@ -25,27 +26,13 @@ services:
       - elasticsearch
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
     ports:
       - "5601:5601"
     networks:
       - default
       - elk-net
-
-  filebeat:
-    image: docker.elastic.co/beats/filebeat:8.12.1
-    container_name: filebeat
-    hostname: filebeat
-    user: root
-    depends_on:
-      - elasticsearch
-      - kibana
-    volumes:
-      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - /srv/logs/nginx:/srv/logs/nginx:ro  # Nginx log mount
-    networks:
-      - default
-      - elk-net
-    command: [ "sh", "-c", "sleep 30 && filebeat --strict.perms=false" ]
 
 volumes:
   es-data:
