@@ -6,17 +6,14 @@ services:
     image: redis:6.0.13-alpine
     networks:
       - redis-net
-      - default
 
   redis-prod:
     container_name: redis-prod
     image: redis:6.0.13-alpine
     networks:
       - redis-net
-      - default
 
 networks:
   redis-net:
-    external: true
-  default:
+    name: redis-net
     driver: bridge
