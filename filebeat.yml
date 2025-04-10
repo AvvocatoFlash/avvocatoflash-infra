@@ -1,0 +1,12 @@
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /srv/logs/nginx/access.log
+      - /srv/logs/nginx/error.log
+    fields:
+      service: nginx
+    fields_under_root: true
+    multiline.pattern: '^\['
+    multiline.negate: true
+    multiline.match: after
