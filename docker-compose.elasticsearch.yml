@@ -26,7 +26,7 @@ services:
     depends_on:
       - elasticsearch
     environment:
-      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_USERNAME=kibana_system
       - ELASTICSEARCH_PASSWORD=elastic
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     volumes:
