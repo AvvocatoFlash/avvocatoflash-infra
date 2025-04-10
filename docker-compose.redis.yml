@@ -7,12 +7,6 @@ services:
     networks:
       - redis-net
 
-  redis-prod:
-    container_name: redis-prod
-    image: redis:6.0.13-alpine
-    networks:
-      - redis-net
-
 networks:
   redis-net:
     name: redis-net
