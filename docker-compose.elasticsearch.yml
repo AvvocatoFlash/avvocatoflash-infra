@@ -27,7 +27,7 @@ services:
       - elasticsearch
     environment:
       - ELASTICSEARCH_USERNAME=kibana_system
-      - ELASTICSEARCH_PASSWORD=elastic
+      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     volumes:
       - /srv/data/kibana:/usr/share/kibana/data
