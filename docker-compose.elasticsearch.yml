@@ -11,8 +11,10 @@ services:
       - xpack.security.transport.ssl.enabled=false
       - ELASTIC_PASSWORD=elastic  # 👈 superuser (elastic) password
     volumes:
-      - /srv/data/elasticsearch:/usr/share/elasticsearch/data
       - /srv/logs/elasticsearch:/usr/share/elasticsearch/logs
+      - /srv/data/elasticsearch:/usr/share/elasticsearch/data
+      - /srv/data/elasticsearch-users:/usr/share/elasticsearch/config/users
+      - /srv/data/elasticsearch-users:/usr/share/elasticsearch/config/users_roles
     ports:
       - "9200:9200"
     networks:
