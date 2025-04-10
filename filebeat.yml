@@ -9,9 +9,9 @@ filebeat.inputs:
     fields_under_root: true
 
 output.elasticsearch:
-  hosts: ["http://localhost:9200"]
+  hosts: ["http://elasticsearch:9200"]
 
 setup.kibana:
-  host: "http://localhost:5601"
+  host: "http://kibana:5601"
 
 setup.dashboards.enabled: true
