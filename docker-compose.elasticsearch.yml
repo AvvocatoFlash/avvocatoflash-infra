@@ -26,7 +26,8 @@ services:
       - elasticsearch
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - ELASTICSEARCH_SERVICEACCOUNT_TOKEN=${ELASTICSEARCH_SERVICEACCOUNT_TOKEN}
+    volumes:
+      - /srv/data/kibana-service-token:/usr/share/kibana/config/elasticsearch.serviceAccountToken
     ports:
       - "5601:5601"
     networks:
