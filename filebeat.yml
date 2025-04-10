@@ -8,10 +8,6 @@ filebeat.inputs:
       service: nginx
     fields_under_root: true
 
-processors:
-  - add_host_metadata: ~
-  - add_cloud_metadata: ~
-
 output.elasticsearch:
   hosts: ["http://elasticsearch:9200"]
 
