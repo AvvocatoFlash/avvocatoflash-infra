@@ -13,8 +13,7 @@ services:
     volumes:
       - /srv/logs/elasticsearch:/usr/share/elasticsearch/logs
       - /srv/data/elasticsearch:/usr/share/elasticsearch/data
-      - /srv/data/elasticsearch-users:/usr/share/elasticsearch/config/users
-      - /srv/data/elasticsearch-users:/usr/share/elasticsearch/config/users_roles
+      - /srv/elasticsearch-config:/usr/share/elasticsearch/config
     ports:
       - "9200:9200"
     networks:
