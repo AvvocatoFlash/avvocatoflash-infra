@@ -1,3 +1,7 @@
+logging:
+  level: debug
+  selectors: ["*"]
+
 filebeat.inputs:
   - type: log
     enabled: true
@@ -7,8 +11,6 @@ filebeat.inputs:
     fields:
       service: nginx
     fields_under_root: true
-    logging.level: debug
-    logging.selectors: [ "*" ]
 
 output.elasticsearch:
   hosts: ["http://elasticsearch:9200"]
