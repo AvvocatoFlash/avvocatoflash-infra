@@ -13,7 +13,6 @@ services:
     volumes:
       - /srv/logs/elasticsearch:/usr/share/elasticsearch/logs
       - /srv/data/elasticsearch:/usr/share/elasticsearch/data
-      - /srv/elasticsearch-config:/usr/share/elasticsearch/config
     ports:
       - "9200:9200"
     networks:
@@ -27,6 +26,8 @@ services:
     depends_on:
       - elasticsearch
     environment:
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=elastic
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     volumes:
       - /srv/data/kibana:/usr/share/kibana/data
