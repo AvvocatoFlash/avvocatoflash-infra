@@ -28,6 +28,7 @@ services:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     volumes:
       - /srv/data/kibana.yml:/usr/share/kibana/config/kibana.yml
+      - /srv/data/kibana-service-token:/usr/share/kibana/config/elasticsearch.serviceAccountToken:ro
     ports:
       - "5601:5601"
     networks:
