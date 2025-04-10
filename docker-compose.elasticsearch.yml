@@ -9,7 +9,7 @@ services:
       - discovery.type=single-node
       - xpack.security.enabled=true
       - xpack.security.transport.ssl.enabled=false
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}  # 👈 superuser (elastic) password
+      - ELASTIC_PASSWORD=elastic  # 👈 superuser (elastic) password
     volumes:
       - /srv/data/elasticsearch:/usr/share/elasticsearch/data
       - /srv/logs/elasticsearch:/usr/share/elasticsearch/logs
