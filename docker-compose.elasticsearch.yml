@@ -45,7 +45,7 @@ services:
     networks:
       - default
       - elk-net
-    command: ["--strict.perms=false"]  # disables permission checks
+    command: [ "sh", "-c", "sleep 30 && filebeat --strict.perms=false" ]
 
 volumes:
   es-data:
