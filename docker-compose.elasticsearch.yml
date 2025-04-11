@@ -13,12 +13,13 @@ services:
     volumes:
       - /srv/logs/elasticsearch:/usr/share/elasticsearch/logs
       - /srv/data/elasticsearch:/usr/share/elasticsearch/data
+      - ./entry.sh:/entry.sh
     ports:
       - "9200:9200"
     networks:
       - default
       - elk-net
-    entrypoint: ["bash", "./entry.sh"]
+    entrypoint: ["bash", "/entry.sh"]
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.17.4
