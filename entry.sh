@@ -4,6 +4,8 @@ set -e
 # Start Elasticsearch in background
 bash /usr/local/bin/docker-entrypoint.sh &
 
+echo "${ELASTIC_PASSWORD}"
+
 # Wait until Elasticsearch is healthy
 until curl -s -u elastic:"$ELASTIC_PASSWORD" http://localhost:9200 | grep -q "You Know, for Search"; do
   echo "Still waiting..."
