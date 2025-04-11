@@ -51,7 +51,7 @@ echo "👤 Creating kibana_admin user..."
 curl -s -X POST -u elastic:"$ELASTIC_PASSWORD" \
   -H "Content-Type: application/json" \
   -d '{
-    "password": "'"$KIBANA_ADMIN_PASSWORD"'",
+    "password": "'"$KIBANA_SYSTEM_PASSWORD"'",
     "roles": ["superuser", "custom_monitoring_role", "logs_viewer_role"],
     "full_name": "Kibana Admin",
     "email": "admin@example.com"
