@@ -10,7 +10,6 @@ until [ "$(curl -s -o /dev/null -w '%{http_code}' -u elastic:"$ELASTIC_PASSWORD"
   sleep 5
 done
 
-
 echo "✅ Elasticsearch is up!"
 
 ### 1. Reset kibana_system password
