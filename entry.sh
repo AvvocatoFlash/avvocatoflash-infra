@@ -2,7 +2,7 @@
 set -e
 
 # Start Elasticsearch in background
-bash /usr/local/bin/docker-entrypoint.sh
+bash /usr/local/bin/docker-entrypoint.sh &
 
 # Wait until Elasticsearch is healthy
 until [ "$(curl -s -o /dev/null -w '%{http_code}' -u elastic:"$ELASTIC_PASSWORD" http://localhost:9200/_cluster/health)" -eq 200 ]; do
