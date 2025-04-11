@@ -11,9 +11,9 @@ services:
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       - KIBANA_SYSTEM_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
     volumes:
-      - /srv/logs/elasticsearch:/usr/share/elasticsearch/logs
-      - /srv/data/elasticsearch:/usr/share/elasticsearch/data
-      - ./entry.sh:/entry.sh
+        - /srv/logs/elasticsearch:/usr/share/elasticsearch/logs
+        - /srv/data/elasticsearch:/usr/share/elasticsearch/data
+        - ./entry.sh:/entry.sh
     ports:
       - "9200:9200"
     networks:
@@ -32,9 +32,6 @@ services:
       - ELASTICSEARCH_USERNAME=kibana_system
       - ELASTICSEARCH_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
       - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
-    volumes:
-      - /srv/data/kibana:/usr/share/kibana/data
-      - /srv/logs/kibana:/usr/share/kibana/logs
     ports:
       - "5601:5601"
     networks:
@@ -46,6 +43,7 @@ volumes:
 
 networks:
   elk-net:
-    external: true
+    name: elk-net
+    driver: bridge
   default:
     driver: bridge
