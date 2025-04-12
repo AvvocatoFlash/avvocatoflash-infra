@@ -49,7 +49,6 @@ services:
       - /:/hostfs:ro
     networks:
       - elk-net
-      - fleet-net-dev
 
   # --------------------------------------------------
   # Prod Elastic Agent
@@ -71,16 +70,10 @@ services:
       - /:/hostfs:ro
     networks:
       - elk-net
-      - fleet-net-prod
 
 networks:
   elk-net:
+    name: elk-net
     external: true
-
-  fleet-net-dev:
-    name: fleet-net-dev
-    external: true
-
-  fleet-net-prod:
-    name: fleet-net-prod
-    external: true
+  default:
+    driver: bridge
