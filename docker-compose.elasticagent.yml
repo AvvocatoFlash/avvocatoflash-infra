@@ -14,14 +14,12 @@ services:
       - FLEET_SERVER_ENABLE=true
       - FLEET_ENROLL=1
       - FLEET_SERVER_ELASTICSEARCH_HOST=http://elasticsearch:9200
-      - FLEET_SERVER_ELASTICSEARCH_USERNAME=kibana_system
+      - FLEET_SERVER_ELASTICSEARCH_USERNAME=kibana_admin
       - FLEET_SERVER_ELASTICSEARCH_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
       - FLEET_SERVER_SERVICE_TOKEN=${FLEET_SERVER_SERVICE_TOKEN}
       - FLEET_SERVER_POLICY=fleet-server-policy
       - FLEET_URL=https://fleet.avvocatoflash.dev
       - FLEET_INSECURE=true
-    extra_hosts:
-      - "localhost:host-gateway"
     ports:
       - "8220:8220"
     volumes:
@@ -30,9 +28,7 @@ services:
       - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
       - /:/hostfs:ro
     networks:
-      - default
       - elk-net
-      - ela-net
 
   # --------------------------------------------------
   # Dev Elastic Agent
@@ -53,9 +49,7 @@ services:
       - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
       - /:/hostfs:ro
     networks:
-      - default
       - elk-net
-      - ela-net
 
   # --------------------------------------------------
   # Prod Elastic Agent
@@ -76,15 +70,8 @@ services:
       - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
       - /:/hostfs:ro
     networks:
-      - default
       - elk-net
-      - ela-net
 
 networks:
-  ela-net:
-    name: ela-net
-    driver: bridge
   elk-net:
     external: true
-  default:
-    driver: bridge
