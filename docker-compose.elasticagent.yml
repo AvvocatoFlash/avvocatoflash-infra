@@ -1,6 +1,9 @@
 version: "3.8"
 
 services:
+  # --------------------------------------------------
+  # Fleet Server
+  # --------------------------------------------------
   fleet-server:
     image: docker.elastic.co/beats/elastic-agent:8.17.4
     container_name: fleet-server
@@ -10,20 +13,25 @@ services:
       - FLEET_SERVER_ENABLE=1
       - FLEET_ENROLL=1
       - FLEET_SERVER_ELASTICSEARCH_HOST=http://elasticsearch:9200
+      - FLEET_SERVER_ELASTICSEARCH_USERNAME=kibana_system
+      - FLEET_SERVER_ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
       - FLEET_SERVER_SERVICE_TOKEN=${FLEET_SERVER_SERVICE_TOKEN}
       - FLEET_SERVER_POLICY=fleet-server-policy
       - FLEET_URL=https://fleet.avvocatoflash.dev
       - FLEET_INSECURE=true
+    ports:
+      - "8220:8220"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /proc:/hostfs/proc:ro
       - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
       - /:/hostfs:ro
-    ports:
-      - "8220:8220"
     networks:
       - elk-net
 
+  # --------------------------------------------------
+  # Dev Elastic Agent
+  # --------------------------------------------------
   elastic-agent-dev:
     image: docker.elastic.co/beats/elastic-agent:8.17.4
     container_name: elastic-agent-avvocatoflash-dev
@@ -40,8 +48,12 @@ services:
       - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
       - /:/hostfs:ro
     networks:
-      - dev-net
+      - elk-net
+      - fleet-net-dev
 
+  # --------------------------------------------------
+  # Prod Elastic Agent
+  # --------------------------------------------------
   elastic-agent-prod:
     image: docker.elastic.co/beats/elastic-agent:8.17.4
     container_name: elastic-agent-avvocatoflash-prod
@@ -58,16 +70,17 @@ services:
       - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
       - /:/hostfs:ro
     networks:
-      - prod-net
+      - elk-net
+      - fleet-net-prod
 
 networks:
-  dev-net:
-    name: avvocatoflash-dev_default
-    external: true
-
-  prod-net:
-    name: avvocatoflash-prod_default
-    external: true
-
   elk-net:
+    external: true
+
+  fleet-net-dev:
+    name: fleet-net-dev
+    external: true
+
+  fleet-net-prod:
+    name: fleet-net-prod
     external: true
