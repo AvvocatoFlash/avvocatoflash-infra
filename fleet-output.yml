@@ -1,0 +1,6 @@
+outputs:
+  default:
+    type: elasticsearch
+    hosts: ["http://elasticsearch:9200"]
+    username: ${FLEET_SERVER_ELASTICSEARCH_USERNAME}
+    password: ${FLEET_SERVER_ELASTICSEARCH_PASSWORD}

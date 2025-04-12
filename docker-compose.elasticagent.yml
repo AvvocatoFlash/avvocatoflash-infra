@@ -22,13 +22,12 @@ services:
       - FLEET_INSECURE=true
     ports:
       - "8220:8220"
-    extra_hosts:
-      - "localhost:elasticsearch"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /proc:/hostfs/proc:ro
       - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
       - /:/hostfs:ro
+      - ./fleet-output.yml:/etc/elastic-agent/outputs.yml:ro
     networks:
       - elk-net
 
