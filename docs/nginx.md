@@ -18,6 +18,14 @@ This document explains how to configure Nginx with Let's Encrypt TLS certificate
 
 ---
 
+## 🐳 Nginx Configuration
+```bash
+cat /srv/nginx/conf.d/default.conf
+```
+
+
+---
+
 ## 📦 Nginx in Docker
 
 We run Nginx using Docker with `docker-compose`. Here’s a simplified view of the `nginx` service:
