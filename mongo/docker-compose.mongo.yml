@@ -95,27 +95,28 @@ services:
       - mongo3
     entrypoint: [ "bash","-c" ]
     command: |
+      # wait for mongod to be ready
       sleep 5 &&
       mongosh --host mongo1:27017 \
         -u root \
         -p "${MONGODB_ROOT_PASSWORD}" \
         --authenticationDatabase admin \
-        --quiet --eval "
+        --quiet --eval '
           try {
             rs.status();
-            print('already initiated');
+            print("already initiated");
           } catch (e) {
             rs.initiate({
-              _id: 'rs0',
+              _id: "rs0",
               members: [
-                { _id: 0, host: 'mongo1:27017' },
-                { _id: 1, host: 'mongo2:27018' },
-                { _id: 2, host: 'mongo3:27019' }
+                { _id: 0, host: "mongo1:27017" },
+                { _id: 1, host: "mongo2:27018" },
+                { _id: 2, host: "mongo3:27019" }
               ]
             });
-            print('replica set initiated');
+            print("replica set initiated");
           }
-        "
+        '
     restart: "no"
     networks:
       - internal-net
