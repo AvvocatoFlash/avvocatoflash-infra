@@ -1,0 +1,4 @@
+################ Global processors ################
+server.host: "0.0.0.0"
+xpack.encryptedSavedObjects:
+  encryptionKey: "${KIBANA_ENCRYPTION_KEY}"

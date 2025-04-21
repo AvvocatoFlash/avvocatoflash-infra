@@ -1,0 +1,21 @@
+################ apm-server ################
+apm-server:
+  # listen on 0.0.0.0:8200 inside the container
+  host: "0.0.0.0:8200"
+  agent.config:
+    enabled: true
+    cache:
+      expiration: 30s
+
+################ Kibana setup (dashboards + index pattern) ################
+setup.dashboards.enabled: true
+setup.kibana:
+  host: "${KIBANA_HOST}"
+  username: "${KIBANA_SYSTEM_USERNAME}"
+  password: "${KIBANA_SYSTEM_PASSWORD}"
+
+################ Elasticsearch output ################
+output.elasticsearch:
+  hosts: ["${ELASTICSEARCH_HOSTS}"]
+  username: ${ELASTIC_USERNAME}
+  password: ${ELASTIC_PASSWORD}

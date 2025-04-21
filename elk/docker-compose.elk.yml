@@ -1,0 +1,131 @@
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.4
+    container_name: elasticsearch
+    hostname: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+      - ELASTIC_USERNAME=${ELASTIC_USERNAME}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - KIBANA_SYSTEM_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+      - es-logs:/usr/share/elasticsearch/logs
+      - ./elk-entry.sh:/elk-entry.sh
+    ports:
+      - '9200:9200'
+    restart: unless-stopped
+    entrypoint: /elk-entry.sh
+    networks:
+      - internal-net
+      - public-net
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.17.4
+    container_name: kibana
+    hostname: kibana
+    depends_on:
+      - elasticsearch
+    ports:
+      - '5601:5601'
+    environment:
+      - ELASTICSEARCH_HOSTS=${ELASTICSEARCH_HOSTS}
+      - ELASTICSEARCH_USERNAME=${KIBANA_SYSTEM_USERNAME}
+      - ELASTICSEARCH_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
+      - KIBANA_ENCRYPTION_KEY=${KIBANA_ENCRYPTION_KEY}
+      - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
+      - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=${KIBANA_ENCRYPTION_KEY}
+    volumes:
+      - ./config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5601/api/status || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - internal-net
+      - public-net
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.17.4
+    container_name: filebeat
+    user: root # need root to read /var/lib/docker
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - filebeat-data:/usr/share/filebeat/data
+    depends_on:
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_HOSTS=${ELASTICSEARCH_HOSTS}
+      - ELASTIC_USERNAME=${ELASTIC_USERNAME}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+    networks:
+      - internal-net
+      - public-net
+
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:8.17.4
+    container_name: metricbeat
+    user: root # so it can read the Docker socket
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./config/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+      - metricbeat-data:/usr/share/metricbeat/data
+      - ./modules.d:/usr/share/metricbeat/modules.d:ro
+    environment:
+      - ELASTICSEARCH_HOSTS=${ELASTICSEARCH_HOSTS}
+      - ELASTIC_USERNAME=${ELASTIC_USERNAME}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - KIBANA_HOST=${KIBANA_HOST}
+      - KIBANA_SYSTEM_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
+    depends_on:
+      elasticsearch:
+        condition: service_started
+      kibana:
+        condition: service_healthy
+    networks:
+      - internal-net
+      - public-net
+
+  apm-server:
+    image: docker.elastic.co/apm/apm-server:8.17.4
+    container_name: apm-server
+    environment:
+      - ELASTICSEARCH_HOSTS=${ELASTICSEARCH_HOSTS}
+      - ELASTIC_USERNAME=${ELASTIC_USERNAME}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - KIBANA_HOST=${KIBANA_HOST}
+      - KIBANA_SYSTEM_USERNAME=${KIBANA_SYSTEM_USERNAME}
+      - KIBANA_SYSTEM_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
+    depends_on:
+      elasticsearch:
+        condition: service_started
+      kibana:
+        condition: service_healthy
+    ports:
+      - "8200:8200"
+    volumes:
+      - ./config/apm-server.yml:/usr/share/apm-server/apm-server.yml:ro
+    networks:
+      - internal-net
+      - public-net
+
+volumes:
+  es-data:
+  es-logs:
+  filebeat-data:
+  metricbeat-data:
+
+networks:
+  internal-net:
+    external: true
+    name: internal-net
+  public-net:
+    external: true
+    name: public-net

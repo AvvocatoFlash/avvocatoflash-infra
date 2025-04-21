@@ -1,0 +1,17 @@
+services:
+  dns:
+    image: jpillora/dnsmasq:latest
+    container_name: tunnel
+    # bind only on your Mac’s loopback
+    ports:
+      - "127.0.0.1:53:53/udp"
+    # map a hosts file with the names you need
+    volumes:
+      - ./dnsmasq.conf:/etc/dnsmasq.conf:ro
+    networks:
+      - internal-net
+
+networks:
+  internal-net:
+    external: true
+    name: internal-net

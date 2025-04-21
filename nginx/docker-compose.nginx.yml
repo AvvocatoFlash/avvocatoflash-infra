@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:stable
+    container_name: nginx
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ${FILES_PATH}/srv/logs/nginx:/var/log/nginx
+      - ${FILES_PATH}/srv/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ${FILES_PATH}/srv/nginx/webroot:${FILES_PATH}/srv/nginx/webroot:ro
+      - ${FILES_PATH}/srv/nginx/certs:/etc/nginx/certs:ro
+    extra_hosts:
+      - 'host.docker.internal:172.17.0.1'
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:80/']
+      interval: 10s # keep checking every 10 seconds
+      timeout: 5s # fail after 5s if no response
+      retries: 10 # after 10 failures, mark as unhealthy
+      start_period: 10s # optional: grace period at container start
+    restart: unless-stopped
+    networks:
+      - internal-net
+      - public-net
+
+networks:
+  internal-net:
+    external: true
+    name: internal-net
+  public-net:
+    external: true
+    name: public-net
