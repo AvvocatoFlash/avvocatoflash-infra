@@ -3,11 +3,22 @@ services:
     image: mongo:7.0.0
     container_name: mongo1
     hostname: mongo1
-    command: ['mongod', '--replSet', 'rs0', '--bind_ip_all', '--port', '27017']
+    command:
+      [
+        "mongod",
+        "--replSet", "rs0",
+        "--bind_ip_all",
+        "--port", "27017",
+        "--keyFile", "/etc/mongo-keyfile"
+      ]
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_ROOT_PASSWORD}
     ports:
       - '27017:27017'
     volumes:
       - ${FILES_PATH}/srv/data/mongodb/mongo1:/data/db
+      - ${FILES_PATH}/srv/data/mongo-config/mongo-keyfile:/etc/mongo-keyfile:ro
     restart: unless-stopped
     healthcheck:
       test: [ "CMD", "mongo", "--quiet", "--eval", "db.adminCommand('ping')" ]
@@ -21,11 +32,22 @@ services:
     image: mongo:7.0.0
     container_name: mongo2
     hostname: mongo2
-    command: ['mongod', '--replSet', 'rs0', '--bind_ip_all', '--port', '27017']
+    command:
+      [
+        "mongod",
+        "--replSet", "rs0",
+        "--bind_ip_all",
+        "--port", "27017",
+        "--keyFile", "/etc/mongo-keyfile"
+      ]
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_ROOT_PASSWORD}
     ports:
       - '27018:27017'
     volumes:
       - ${FILES_PATH}/srv/data/mongodb/mongo2:/data/db
+      - ${FILES_PATH}/srv/data/mongo-config/mongo-keyfile:/etc/mongo-keyfile:ro
     restart: unless-stopped
     healthcheck:
       test: [ "CMD", "mongo", "--quiet", "--eval", "db.adminCommand('ping')" ]
@@ -39,11 +61,22 @@ services:
     image: mongo:7.0.0
     container_name: mongo3
     hostname: mongo3
-    command: ['mongod', '--replSet', 'rs0', '--bind_ip_all', '--port', '27017']
+    command:
+      [
+        "mongod",
+        "--replSet", "rs0",
+        "--bind_ip_all",
+        "--port", "27017",
+        "--keyFile", "/etc/mongo-keyfile"
+      ]
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_ROOT_PASSWORD}
     ports:
       - '27019:27017'
     volumes:
       - ${FILES_PATH}/srv/data/mongodb/mongo3:/data/db
+      - ${FILES_PATH}/srv/data/mongo-config/mongo-keyfile:/etc/mongo-keyfile:ro
     restart: unless-stopped
     healthcheck:
       test: [ "CMD", "mongo", "--quiet", "--eval", "db.adminCommand('ping')" ]
