@@ -12,7 +12,7 @@ services:
     volumes:
       - /srv/data/mongodb/mongo1:/data/db
       - /srv/logs/mongodb/mongo1:/var/log/mongodb
-      - /srv/infra/avvocatoflash-infra/mongo/file.key:/auth/file.key:ro
+      - ./file.key:/auth/file.key:ro
     restart: unless-stopped
     healthcheck:
       test: [ "CMD-SHELL","echo 'rs.status().ok' | mongo admin --port 27017 -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet | grep -q 1" ]
