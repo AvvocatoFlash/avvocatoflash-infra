@@ -3,22 +3,11 @@ services:
     image: mongo:7.0.0
     container_name: mongo1
     hostname: mongo1
-    command:
-      [
-        "mongod",
-        "--replSet", "rs0",
-        "--bind_ip_all",
-        "--port", "27017",
-        "--keyFile", "/etc/mongo-keyfile"
-      ]
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_ROOT_PASSWORD}
+    command: ['mongod', '--replSet', 'rs0', '--bind_ip_all', '--port', '27017']
     ports:
       - '27017:27017'
     volumes:
-      - /srv/data/mongodb/mongo1:/data/db
-      - /srv/data/mongo-config/mongo-keyfile:/etc/mongo-keyfile:ro
+      - ${FILES_PATH}/srv/data/mongodb/mongo1:/data/db
     restart: unless-stopped
     healthcheck:
       test: [ "CMD", "mongo", "--quiet", "--eval", "db.adminCommand('ping')" ]
@@ -32,22 +21,11 @@ services:
     image: mongo:7.0.0
     container_name: mongo2
     hostname: mongo2
-    command:
-      [
-        "mongod",
-        "--replSet", "rs0",
-        "--bind_ip_all",
-        "--port", "27017",
-        "--keyFile", "/etc/mongo-keyfile"
-      ]
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_ROOT_PASSWORD}
+    command: ['mongod', '--replSet', 'rs0', '--bind_ip_all', '--port', '27018']
     ports:
       - '27018:27017'
     volumes:
-      - /srv/data/mongodb/mongo2:/data/db
-      - /srv/data/mongo-config/mongo-keyfile:/etc/mongo-keyfile:ro
+      - ${FILES_PATH}/srv/data/mongodb/mongo2:/data/db
     restart: unless-stopped
     healthcheck:
       test: [ "CMD", "mongo", "--quiet", "--eval", "db.adminCommand('ping')" ]
@@ -61,22 +39,11 @@ services:
     image: mongo:7.0.0
     container_name: mongo3
     hostname: mongo3
-    command:
-      [
-        "mongod",
-        "--replSet", "rs0",
-        "--bind_ip_all",
-        "--port", "27017",
-        "--keyFile", "/etc/mongo-keyfile"
-      ]
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_ROOT_PASSWORD}
+    command: ['mongod', '--replSet', 'rs0', '--bind_ip_all', '--port', '27019']
     ports:
       - '27019:27017'
     volumes:
-      - /srv/data/mongodb/mongo3:/data/db
-      - /srv/data/mongo-config/mongo-keyfile:/etc/mongo-keyfile:ro
+      - ${FILES_PATH}/srv/data/mongodb/mongo3:/data/db
     restart: unless-stopped
     healthcheck:
       test: [ "CMD", "mongo", "--quiet", "--eval", "db.adminCommand('ping')" ]
@@ -94,29 +61,23 @@ services:
       - mongo2
       - mongo3
     entrypoint: [ "bash","-c" ]
-    command: |
-      # wait for mongod to be ready
-      sleep 5 &&
-      mongosh --host mongo1:27017 \
-        -u root \
-        -p "${MONGODB_ROOT_PASSWORD}" \
-        --authenticationDatabase admin \
-        --quiet --eval '
-          try {
-            rs.status();
-            print("already initiated");
-          } catch (e) {
-            rs.initiate({
-              _id: "rs0",
-              members: [
-                { _id: 0, host: "mongo1:27017" },
-                { _id: 1, host: "mongo2:27018" },
-                { _id: 2, host: "mongo3:27019" }
-              ]
-            });
-            print("replica set initiated");
-          }
-        '
+    command:
+      [
+        # wait 5 seconds for mongo1 to be up,
+        "sleep 5 && \
+           mongosh --host mongo1:27017 --quiet --eval \
+           \"try { rs.status(); print('already initiated'); } \
+             catch(e) { \
+               rs.initiate({ \
+                 _id: 'rs0', \
+                 members:[ \
+                   {_id:0,host:'mongo1:27017'}, \
+                   {_id:1,host:'mongo2:27018'}, \
+                   {_id:2,host:'mongo3:27019'} \
+                 ] \
+               }); \
+             }\""
+      ]
     restart: "no"
     networks:
       - internal-net
