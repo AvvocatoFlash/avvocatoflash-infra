@@ -35,7 +35,7 @@ services:
     volumes:
       - /srv/data/mongodb/mongo2:/data/db
       - /srv/logs/mongodb/mongo2:/var/log/mongodb
-      - /srv/infra/avvocatoflash-infra/mongo/file.key:/auth/file.key:ro
+      - ./file.key:/auth/file.key:ro
     restart: unless-stopped
     healthcheck:
       test: [ "CMD-SHELL","echo 'rs.status().ok' | mongo admin --port 27018 -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet | grep -q 1" ]
@@ -58,7 +58,7 @@ services:
     volumes:
       - /srv/data/mongodb/mongo3:/data/db
       - /srv/logs/mongodb/mongo3:/var/log/mongodb
-      - /srv/infra/avvocatoflash-infra/mongo/file.key:/auth/file.key:ro
+      - ./file.key:/auth/file.key:ro
     restart: unless-stopped
     healthcheck:
       test: [ "CMD-SHELL","echo 'rs.status().ok' | mongo admin --port 27019 -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet | grep -q 1" ]
