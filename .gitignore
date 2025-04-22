@@ -1,0 +1,6 @@
+.env
+.idea
+elk/.env.elk
+mongo/.env.mongo
+mongo/file.key
+nginx/.env.enginx
