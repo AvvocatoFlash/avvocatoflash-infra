@@ -111,8 +111,6 @@ The script will:
 
 - `--auth` enforces client authentication on all operations.
 - `--keyFile` secures inter‑node communication.
-- Default volumes use `${FILES_PATH:-}` so you can set `FILES_PATH` locally or leave blank on the server.
-- On macOS with Docker Desktop, ensure your project path is in Preferences → File Sharing.
 
 
 ./mongo/mongo-user.sh -u db-dev -d db-avvocatoflash-dev -p read:write

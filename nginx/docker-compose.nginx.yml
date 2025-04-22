@@ -8,10 +8,10 @@ services:
       - '80:80'
       - '443:443'
     volumes:
-      - ${FILES_PATH:-}/srv/logs/nginx:/var/log/nginx
-      - ${FILES_PATH:-}/srv/nginx/conf.d:/etc/nginx/conf.d:ro
-      - ${FILES_PATH:-}/srv/nginx/webroot:${FILES_PATH:-}/srv/nginx/webroot:ro
-      - ${FILES_PATH:-}/srv/nginx/certs:/etc/nginx/certs:ro
+      - /srv/logs/nginx:/var/log/nginx
+      - /srv/nginx/conf.d:/etc/nginx/conf.d:ro
+      - /srv/nginx/webroot:${FILES_PATH:-}/srv/nginx/webroot:ro
+      - /srv/nginx/certs:/etc/nginx/certs:ro
     extra_hosts:
       - 'host.docker.internal:172.17.0.1'
     healthcheck:
