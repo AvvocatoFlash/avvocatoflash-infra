@@ -29,6 +29,7 @@ This guide shows how to stand up a secure, authenticated MongoDB replica set in 
 ```bash
 cd ~/srv/infra/mongo
 openssl rand -base64 700 > file.key
+sudo chown 999:999 file.key
 chmod 400 file.key
 ls -l file.key
 # -r-------- 1 youruser staff 1024 Apr 22 13:00 file.key
@@ -110,6 +111,8 @@ The script will:
 
 - `--auth` enforces client authentication on all operations.
 - `--keyFile` secures inter‑node communication.
+- Default volumes use `${FILES_PATH:-}` so you can set `FILES_PATH` locally or leave blank on the server.
+- On macOS with Docker Desktop, ensure your project path is in Preferences → File Sharing.
 
 
 ./mongo/mongo-user.sh -u db-dev -d db-avvocatoflash-dev -p read:write

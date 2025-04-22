@@ -21,6 +21,7 @@ echo "🔧 Compose file: ${DOCKER_FILE}"
 
 echo "🛠️  Environment variables:"
 echo "   COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}"
+echo "   FILES_PATH=${FILES_PATH:-<not set>}"
 
 # 🧹 Clean previous containers/networks
 echo "🧹 Cleaning up containers and networks for ${COMPOSE_PROJECT_NAME}..."

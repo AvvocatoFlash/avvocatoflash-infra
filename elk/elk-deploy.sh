@@ -21,6 +21,7 @@ echo "🔧 Compose file: ${DOCKER_FILE}"
 
 echo "🛠️  Environment variables:"
 echo "   COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME:-<not set>}"
+echo "   FILES_PATH=${FILES_PATH:-<not set>}"
 echo "   ELASTIC_PASSWORD=${ELASTIC_PASSWORD:-<not set>}"
 echo "   KIBANA_SYSTEM_PASSWORD=${KIBANA_SYSTEM_PASSWORD:-<not set>}"
 
