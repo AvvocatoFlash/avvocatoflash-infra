@@ -3,14 +3,19 @@ services:
     image: mongo:7.0.0
     container_name: mongo1
     hostname: mongo1
-    command: ['mongod', '--replSet', 'rs0', '--bind_ip_all', '--port', '27017']
+    command: [ 'mongod', '--replSet', '${MONGO_REPLICA_SET_NAME}', '--bind_ip_all', '--port', '27017', '--auth', '--keyFile', '/auth/file.key' ]
     ports:
       - '27017:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
-      - ${FILES_PATH}/srv/data/mongodb/mongo1:/data/db
+      - ${FILES_PATH:-}/srv/data/mongodb/mongo1:/data/db
+      - ${FILES_PATH:-}/srv/logs/mongodb/mongo1:/var/log/mongodb
+      - ./file.key:/auth/file.key:ro
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD", "mongo", "--quiet", "--eval", "db.adminCommand('ping')" ]
+      test: [ "CMD-SHELL","echo 'rs.status().ok' | mongo admin --port 27017 -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet | grep -q 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -21,14 +26,19 @@ services:
     image: mongo:7.0.0
     container_name: mongo2
     hostname: mongo2
-    command: ['mongod', '--replSet', 'rs0', '--bind_ip_all', '--port', '27018']
+    command: [ 'mongod', '--replSet', '${MONGO_REPLICA_SET_NAME}', '--bind_ip_all', '--port', '27018', '--auth', '--keyFile', '/auth/file.key' ]
     ports:
-      - '27018:27017'
+      - '27018:27018'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
-      - ${FILES_PATH}/srv/data/mongodb/mongo2:/data/db
+      - ${FILES_PATH:-}/srv/data/mongodb/mongo2:/data/db
+      - ${FILES_PATH:-}/srv/logs/mongodb/mongo2:/var/log/mongodb
+      - ./file.key:/auth/file.key:ro
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD", "mongo", "--quiet", "--eval", "db.adminCommand('ping')" ]
+      test: [ "CMD-SHELL","echo 'rs.status().ok' | mongo admin --port 27018 -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet | grep -q 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -39,14 +49,19 @@ services:
     image: mongo:7.0.0
     container_name: mongo3
     hostname: mongo3
-    command: ['mongod', '--replSet', 'rs0', '--bind_ip_all', '--port', '27019']
+    command: [ 'mongod', '--replSet', '${MONGO_REPLICA_SET_NAME}', '--bind_ip_all', '--port', '27019', '--auth', '--keyFile', '/auth/file.key' ]
     ports:
-      - '27019:27017'
+      - '27019:27019'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
-      - ${FILES_PATH}/srv/data/mongodb/mongo3:/data/db
+      - ${FILES_PATH:-}/srv/data/mongodb/mongo3:/data/db
+      - ${FILES_PATH:-}/srv/logs/mongodb/mongo3:/var/log/mongodb
+      - ./file.key:/auth/file.key:ro
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD", "mongo", "--quiet", "--eval", "db.adminCommand('ping')" ]
+      test: [ "CMD-SHELL","echo 'rs.status().ok' | mongo admin --port 27019 -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet | grep -q 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -60,24 +75,13 @@ services:
       - mongo1
       - mongo2
       - mongo3
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_REPLICA_SET_NAME: ${MONGO_REPLICA_SET_NAME}
     entrypoint: [ "bash","-c" ]
     command:
-      [
-        # wait 5 seconds for mongo1 to be up,
-        "sleep 5 && \
-           mongosh --host mongo1:27017 --quiet --eval \
-           \"try { rs.status(); print('already initiated'); } \
-             catch(e) { \
-               rs.initiate({ \
-                 _id: 'rs0', \
-                 members:[ \
-                   {_id:0,host:'mongo1:27017'}, \
-                   {_id:1,host:'mongo2:27018'}, \
-                   {_id:2,host:'mongo3:27019'} \
-                 ] \
-               }); \
-             }\""
-      ]
+      [ "sleep 15 && mongosh --host mongo1:27017 -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --authenticationDatabase admin --quiet --eval \"try { rs.status(); print('already initiated') } catch(e) { rs.initiate({ _id: '${MONGO_REPLICA_SET_NAME}', members:[{_id:0,host:'mongo1:27017'},{_id:1,host:'mongo2:27018'},{_id:2,host:'mongo3:27019'}] }); }\"" ]
     restart: "no"
     networks:
       - internal-net

@@ -13,7 +13,7 @@ This document explains how to configure Nginx with Let's Encrypt TLS certificate
 │   ├── conf.d/            # Nginx config files
 │   └── webroot/           # Webroot used by Certbot HTTP-01 challenge
 ├── infra/
-│   └── docker-compose.yml
+│   └── nginx/docker-compose.yml
 ```
 
 ---

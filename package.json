@@ -6,9 +6,9 @@
   "author": "cristianizzo <cristianizzo@me.com>",
   "license": "MIT",
   "scripts": {
+    "mongo:create-user": "bash ./mongo/mongo-user.sh",
     "deploy:elk": "bash elk/elk-deploy.sh",
     "deploy:mongo": "bash mongo/mongo-deploy.sh",
-    "deploy:mongo-tunnel": "docker compose -f 'mongo/docker-compose.tunnel.yml' -p mongo-tunnel down --remove-orphans && docker compose -f 'mongo/docker-compose.tunnel.yml' -p mongo-tunnel up -d --build",
     "deploy:nginx": "bash nginx/nginx-deploy.sh",
     "wait:db": "bash scripts/wait-db.sh",
     "wait:redis": "bash scripts/wait-redis.sh"

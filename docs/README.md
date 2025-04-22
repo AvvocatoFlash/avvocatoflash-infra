@@ -4,4 +4,3 @@
 
 ```bash
 docker compose -p avvocatoflash-mongo -f docker-compose.mongo.yml up -d
-
