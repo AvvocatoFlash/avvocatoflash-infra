@@ -28,7 +28,7 @@ This guide shows how to stand up a secure, authenticated MongoDB replica set in 
 
 ```bash
 cd ~/srv/infra/mongo
-openssl rand -base64 756 > file.key
+openssl rand -base64 700 > file.key
 chmod 400 file.key
 ls -l file.key
 # -r-------- 1 youruser staff 1024 Apr 22 13:00 file.key
