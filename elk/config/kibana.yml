@@ -1,4 +1,5 @@
 ################ Global processors ################
 server.host: "0.0.0.0"
+server.publicBaseUrl: "https://kibana.avvocatoflash.dev"
 xpack.encryptedSavedObjects:
   encryptionKey: "${KIBANA_ENCRYPTION_KEY}"

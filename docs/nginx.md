@@ -76,10 +76,10 @@ These are mounted from the host path:
 2. Copied real .pem files:
 ```bash
 sudo rm /srv/nginx/certs/fullchain.pem /srv/nginx/certs/privkey.pem
-sudo cp /etc/letsencrypt/archive/api.avvocatoflash.dev/fullchain2.pem /srv/nginx/certs/fullchain.pem
-sudo cp /etc/letsencrypt/archive/api.avvocatoflash.dev/privkey2.pem /srv/nginx/certs/privkey.pem
+sudo cp /etc/letsencrypt/archive/api.avvocatoflash.dev/fullchain1.pem /srv/nginx/certs/fullchain.pem
+sudo cp /etc/letsencrypt/archive/api.avvocatoflash.dev/privkey1.pem /srv/nginx/certs/privkey.pem
 ```
-Replace `fullchain2.pem / privkey2.pem` with the latest versions in `/etc/letsencrypt/archive/`.
+Replace `fullchain1.pem / privkey1.pem` with the latest versions in `/etc/letsencrypt/archive/`.
 
 3. Restarted Nginx:
 ```bash
