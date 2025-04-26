@@ -15,5 +15,8 @@
     "stop:nginx": "docker compose -f nginx/docker-compose.nginx.yml -p nginx down --remove-orphans",
     "wait:db": "bash scripts/wait-db.sh",
     "wait:redis": "bash scripts/wait-redis.sh"
+  },
+  "devDependencies": {
+    "mongosh": "^2.5.0"
   }
 }
