@@ -3,7 +3,7 @@ services:
     image: mongo:7.0.0
     container_name: mongo1
     hostname: mongo1
-    command: [ "bash", "-c", "chown root:root /auth/file.key && chmod 600 /auth/file.key && exec mongod --replSet ${MONGO_REPLICA_SET_NAME} --bind_ip_all --port 27017 --auth --keyFile /auth/file.key" ]
+    command: [ 'mongod', '--replSet', '${MONGO_REPLICA_SET_NAME}', '--bind_ip_all', '--port', '27017', '--auth', '--keyFile', '/auth/file.key' ]
     ports:
       - '27017:27017'
     environment:
@@ -26,7 +26,7 @@ services:
     image: mongo:7.0.0
     container_name: mongo2
     hostname: mongo2
-    command: [ "bash", "-c", "chown root:root /auth/file.key && chmod 600 /auth/file.key && exec mongod --replSet ${MONGO_REPLICA_SET_NAME} --bind_ip_all --port 27018 --auth --keyFile /auth/file.key" ]
+    command: [ 'mongod', '--replSet', '${MONGO_REPLICA_SET_NAME}', '--bind_ip_all', '--port', '27018', '--auth', '--keyFile', '/auth/file.key' ]
     ports:
       - '27018:27018'
     environment:
@@ -49,7 +49,7 @@ services:
     image: mongo:7.0.0
     container_name: mongo3
     hostname: mongo3
-    command: [ "bash", "-c", "chown root:root /auth/file.key && chmod 600 /auth/file.key && exec mongod --replSet ${MONGO_REPLICA_SET_NAME} --bind_ip_all --port 27019 --auth --keyFile /auth/file.key" ]
+    command: [ 'mongod', '--replSet', '${MONGO_REPLICA_SET_NAME}', '--bind_ip_all', '--port', '27019', '--auth', '--keyFile', '/auth/file.key' ]
     ports:
       - '27019:27019'
     environment:
