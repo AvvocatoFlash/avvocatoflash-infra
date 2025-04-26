@@ -3,7 +3,7 @@ services:
     image: mongo:7.0.0
     container_name: mongo1
     hostname: mongo1
-    command: [ 'mongod', '--replSet', '${MONGO_REPLICA_SET_NAME}', '--bind_ip_all', '--port', '27017', '--auth', '--keyFile', '/auth/file.key' ]
+    command: [ "bash", "-c", "chown root:root /auth/file.key && chmod 600 /auth/file.key && exec mongod --replSet ${MONGO_REPLICA_SET_NAME} --bind_ip_all --port 27017 --auth --keyFile /auth/file.key" ]
     ports:
       - '27017:27017'
     environment:
@@ -26,7 +26,7 @@ services:
     image: mongo:7.0.0
     container_name: mongo2
     hostname: mongo2
-    command: [ 'mongod', '--replSet', '${MONGO_REPLICA_SET_NAME}', '--bind_ip_all', '--port', '27018', '--auth', '--keyFile', '/auth/file.key' ]
+    command: [ "bash", "-c", "chown root:root /auth/file.key && chmod 600 /auth/file.key && exec mongod --replSet ${MONGO_REPLICA_SET_NAME} --bind_ip_all --port 27018 --auth --keyFile /auth/file.key" ]
     ports:
       - '27018:27018'
     environment:
@@ -49,7 +49,7 @@ services:
     image: mongo:7.0.0
     container_name: mongo3
     hostname: mongo3
-    command: [ 'mongod', '--replSet', '${MONGO_REPLICA_SET_NAME}', '--bind_ip_all', '--port', '27019', '--auth', '--keyFile', '/auth/file.key' ]
+    command: [ "bash", "-c", "chown root:root /auth/file.key && chmod 600 /auth/file.key && exec mongod --replSet ${MONGO_REPLICA_SET_NAME} --bind_ip_all --port 27019 --auth --keyFile /auth/file.key" ]
     ports:
       - '27019:27019'
     environment:
@@ -58,7 +58,7 @@ services:
     volumes:
       - /srv/data/mongodb/mongo3:/data/db
       - /srv/logs/mongodb/mongo3:/var/log/mongodb
-      - /srv/infra/avvocatoflash-infra/mongo/file.key:/auth/file.key:ro
+      - ./file.key:/auth/file.key:ro
     restart: unless-stopped
     healthcheck:
       test: [ "CMD-SHELL","echo 'rs.status().ok' | mongo admin --port 27019 -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet | grep -q 1" ]
