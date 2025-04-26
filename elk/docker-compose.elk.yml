@@ -14,7 +14,7 @@ services:
       - es-logs:/usr/share/elasticsearch/logs
       - ./elk-entry.sh:/elk-entry.sh
     ports:
-      - '9200:9200'
+      - '127.0.0.1:9200:9200'
     restart: unless-stopped
     entrypoint: /elk-entry.sh
     networks:
@@ -28,7 +28,7 @@ services:
     depends_on:
       - elasticsearch
     ports:
-      - '5601:5601'
+      - '127.0.0.1:5601:5601'
     environment:
       - ELASTICSEARCH_HOSTS=${ELASTICSEARCH_HOSTS}
       - ELASTICSEARCH_USERNAME=${KIBANA_SYSTEM_USERNAME}
@@ -109,7 +109,7 @@ services:
       kibana:
         condition: service_healthy
     ports:
-      - "8200:8200"
+      - '127.0.0.1:8200:8200'
     volumes:
       - ./config/apm-server.yml:/usr/share/apm-server/apm-server.yml:ro
     networks:
