@@ -12,7 +12,7 @@ services:
     volumes:
       - /srv/data/mongodb/mongo1:/data/db
       - /srv/logs/mongodb/mongo1:/var/log/mongodb
-      - ./file.key:/auth/file.key:ro
+      - ./file.key:/tmp/file.key:ro
     tmpfs:
       - /tmp
     restart: unless-stopped
@@ -37,7 +37,7 @@ services:
     volumes:
       - /srv/data/mongodb/mongo2:/data/db
       - /srv/logs/mongodb/mongo2:/var/log/mongodb
-      - ./file.key:/auth/file.key:ro
+      - ./file.key:/tmp/file.key:ro
     tmpfs:
       - /tmp
     restart: unless-stopped
@@ -62,7 +62,7 @@ services:
     volumes:
       - /srv/data/mongodb/mongo3:/data/db
       - /srv/logs/mongodb/mongo3:/var/log/mongodb
-      - ./file.key:/auth/file.key:ro
+      - ./file.key:/tmp/file.key:ro
     tmpfs:
       - /tmp
     restart: unless-stopped
