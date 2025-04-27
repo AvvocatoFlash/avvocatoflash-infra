@@ -10,6 +10,7 @@
     "deploy:elk": "bash elk/elk-deploy.sh",
     "deploy:mongo": "bash mongo/mongo-deploy.sh",
     "deploy:nginx": "bash nginx/nginx-deploy.sh",
+    "copy:nginx": "sudo cp nginx/default.conf /srv/nginx/conf.d/default.conf",
     "stop:elk": "docker compose -f elk/docker-compose.elk.yml -p elastic down --remove-orphans",
     "stop:mongo": "docker compose -f mongo/docker-compose.mongo.yml -p mongo down --remove-orphans",
     "stop:nginx": "docker compose -f nginx/docker-compose.nginx.yml -p nginx down --remove-orphans",
