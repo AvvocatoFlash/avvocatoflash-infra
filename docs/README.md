@@ -1,5 +1,6 @@
 # AvvocatoFlash Infra
 
+test
 ### Command to run the MongoDB container
 
 ```bash
