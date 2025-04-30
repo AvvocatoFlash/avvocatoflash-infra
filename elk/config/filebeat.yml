@@ -10,23 +10,18 @@ filebeat.autodiscover:
   providers:
     - type: docker
       hints.enabled: true
-      # default_config must be a map, not a list
       hints.default_config:
-        # use filestream (replaces the old "container" input)
         type: container
-        paths:
-          - "/var/lib/docker/containers/${data.docker.container.id}/*.log"
+        stream: stdout
         processors:
-          # attach all Docker metadata (container name, image, labels…)
           - add_docker_metadata: {}
-          # decode JSON payload only when there's at least one brace
           - decode_json_fields:
               fields: ["message"]
-              target: ""               # merge parsed fields at the top level
-              overwrite_keys: true     # allow JSON fields to override root keys
+              target: ""
+              overwrite_keys: true
               max_depth: 2
               process_array: false
-              ignore_failure: true     # don’t crash on malformed JSON
+              ignore_failure: true
               ignore_missing: true
               when:
                 contains:
