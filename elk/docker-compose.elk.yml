@@ -14,7 +14,7 @@ services:
       - es-logs:/usr/share/elasticsearch/logs
       - ./elk-entry.sh:/elk-entry.sh
     ports:
-      - '127.0.0.1:9200:9200'
+      - '9200:9200'
     restart: unless-stopped
     entrypoint: /elk-entry.sh
     networks:
