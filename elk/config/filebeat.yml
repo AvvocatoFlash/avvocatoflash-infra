@@ -5,7 +5,8 @@ filebeat.inputs: []
 
 ###############################
 # 2. Autodiscover Docker logs
-#########################.autodiscover:
+###############################
+filebeat.autodiscover:
   providers:
     - type: docker
       hints.enabled: true
