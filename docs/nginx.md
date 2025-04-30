@@ -44,7 +44,7 @@ services:
       - /srv/nginx/webroot:/srv/nginx/webroot:ro
       - /srv/nginx/certs:/etc/nginx/certs:ro
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - 'host.docker.internal:172.17.0.1'
 ```
 
 ---
@@ -68,21 +68,45 @@ These are mounted from the host path:
 ## 🛠 How We Applied Certificates
 1. Generated with Certbot:
 ```bash
-   sudo certbot certonly --webroot -w /srv/nginx/webroot \
-   -d api.avvocatoflash.dev \
-   -d api.avvocatoflash.it
+# only dev
+sudo certbot certonly --webroot \
+  -w /srv/nginx/webroot \
+  -d api.avvocatoflash.dev \
+  -d api-admin.avvocatoflash.dev \
+  -d api-customer.avvocatoflash.dev \
+  -d api-website.avvocatoflash.dev \
+  -d api-agency.avvocatoflash.dev \
+  -d api-realestate.avvocatoflash.dev \
+  -d kibana.avvocatoflash.dev
+  
+# all envs
+sudo certbot certonly --webroot \
+  -w /srv/nginx/webroot \
+  -d api.avvocatoflash.dev \
+  -d api.avvocatoflash.it \
+  -d api-admin.avvocatoflash.dev \
+  -d api-admin.avvocatoflash.it \
+  -d api-customer.avvocatoflash.dev \
+  -d api-customer.avvocatoflash.it \
+  -d api-website.avvocatoflash.dev \
+  -d api-website.avvocatoflash.it \
+  -d api-agency.avvocatoflash.dev \
+  -d api-agency.avvocatoflash.it \
+  -d api-realestate.avvocatoflash.dev \
+  -d api-realestate.avvocatoflash.it \
+  -d kibana.avvocatoflash.dev
  ```
 
 2. Copied real .pem files:
 ```bash
-sudo rm /srv/nginx/certs/fullchain.pem /srv/nginx/certs/privkey.pem
-sudo cp /etc/letsencrypt/archive/api.avvocatoflash.dev/fullchain1.pem /srv/nginx/certs/fullchain.pem
-sudo cp /etc/letsencrypt/archive/api.avvocatoflash.dev/privkey1.pem /srv/nginx/certs/privkey.pem
+sudo cp /etc/letsencrypt/live/api.avvocatoflash.dev/fullchain.pem /srv/nginx/certs/fullchain.pem
+sudo cp /etc/letsencrypt/live/api.avvocatoflash.dev/privkey.pem /srv/nginx/certs/privkey.pem
 ```
-Replace `fullchain1.pem / privkey1.pem` with the latest versions in `/etc/letsencrypt/archive/`.
 
 3. Restarted Nginx:
 ```bash
+   yarn docker restart nginx
+   # or
    docker compose -f docker-compose.nginx.yml down && docker compose -f docker-compose.nginx.yml up -d
 ```
 
@@ -91,16 +115,19 @@ Replace `fullchain1.pem / privkey1.pem` with the latest versions in `/etc/letsen
 ## 🔁 Auto-Renewal Setup (Crontab)
 We added this to the root crontab (sudo crontab -e):
 ```bash
-0 3 * * * certbot renew --webroot -w /srv/nginx/webroot --deploy-hook "cp \$(readlink -f /etc/letsencrypt/live/api.avvocatoflash.dev/fullchain.pem) /srv/nginx/certs/fullchain.pem && cp \$(readlink -f /etc/letsencrypt/live/api.avvocatoflash.dev/privkey.pem) /srv/nginx/certs/privkey.pem && docker restart nginx"
+0 3 * * * certbot renew --webroot -w /srv/nginx/webroot --deploy-hook "[ -f /srv/nginx/certs/fullchain.pem ] && mkdir -p /srv/nginx/certs/backups && timestamp=\$(date +\%Y\%m\%d-\%H\%M\%S) && cp /srv/nginx/certs/fullchain.pem /srv/nginx/certs/backups/fullchain.pem.\$timestamp && cp /srv/nginx/certs/privkey.pem /srv/nginx/certs/backups/privkey.pem.\$timestamp; cp /etc/letsencrypt/live/api.avvocatoflash.dev/fullchain.pem /srv/nginx/certs/fullchain.pem && cp /etc/letsencrypt/live/api.avvocatoflash.dev/privkey.pem /srv/nginx/certs/privkey.pem && docker exec nginx nginx -s reload" >> /var/log/letsencrypt/renew-hook.log 2>&1
 ```
+This cron job:
 
-This cron job does the following:
+Simulates certificate renewal via HTTP-01
 
-Attempts to renew certificates via HTTP-01 challenge
+Backs up existing certificates
 
-Copies the newly updated real files to `/srv/nginx/certs/`
+Copies new certs into `/srv/nginx/certs/`
 
-Restarts the nginx container to pick up new certificates
+Reloads the Nginx container
+
+Logs everything to `/var/log/letsencrypt/renew-hook.log`
 
 ---
 
@@ -114,8 +141,8 @@ This will only renew if renewal is needed (usually <30 days remaining).
 
 Afterward, manually copy the updated files:
 ```bash
-sudo cp /etc/letsencrypt/archive/api.avvocatoflash.dev/fullchain3.pem /srv/nginx/certs/fullchain.pem
-sudo cp /etc/letsencrypt/archive/api.avvocatoflash.dev/privkey3.pem /srv/nginx/certs/privkey.pem
+sudo cp /etc/letsencrypt/live/api.avvocatoflash.dev/fullchain.pem /srv/nginx/certs/fullchain.pem
+sudo cp /etc/letsencrypt/live/api.avvocatoflash.dev/privkey.pem /srv/nginx/certs/privkey.pem
 docker restart nginx
 ```
 
@@ -125,19 +152,21 @@ docker restart nginx
 To simulate a renewal (without changing anything):
 
 ```bash
-sudo certbot renew --dry-run --webroot -w /srv/nginx/webroot
+sudo certbot renew --dry-run --deploy-hook "[ -f /srv/nginx/certs/fullchain.pem ] && mkdir -p /srv/nginx/certs/backups && timestamp=$(date +%Y%m%d-%H%M%S) && cp /srv/nginx/certs/fullchain.pem /srv/nginx/certs/backups/fullchain.pem.$timestamp && cp /srv/nginx/certs/privkey.pem /srv/nginx/certs/backups/privkey.pem.$timestamp; cp /etc/letsencrypt/live/api.avvocatoflash.dev/fullchain.pem /srv/nginx/certs/fullchain.pem && cp /etc/letsencrypt/live/api.avvocatoflash.dev/privkey.pem /srv/nginx/certs/privkey.pem && docker exec nginx nginx -s reload"
 ```
 
 Then verify:
 ```bash
 ls -l /srv/nginx/certs/
-docker exec -it nginx ls -l /etc/nginx/certs/
+docker exec nginx ls -l /etc/nginx/certs/
 docker logs nginx --tail=20
 ```
 
 ---
-we have disabled iptables to stop Docker from exposing ports to the public unless explicitly allowed
 
+## 🚧 docker
+We configured Docker to disable the userland proxy to avoid unnecessary port bindings. This enhances security by ensuring Docker doesn’t open additional ports on the host unless explicitly defined in the Docker Compose configuration.
+Edit:
 ```bash
 nano /etc/docker/daemon.json
 sudo systemctl restart docker
@@ -145,7 +174,9 @@ sudo systemctl restart docker
 Added the following content to the file:
 ```json
 {
-"iptables": false
+  "userland-proxy": false
 }
 ```
 
+sudo tail -f /srv/logs/nginx/access.log
+sudo tail -n 50 /srv/logs/nginx/error.log
