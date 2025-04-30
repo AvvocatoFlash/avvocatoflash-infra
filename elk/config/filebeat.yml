@@ -5,15 +5,14 @@ filebeat.inputs: []
 
 ###############################
 # 2. Autodiscover Docker logs
-###############################
-filebeat.autodiscover:
+#########################.autodiscover:
   providers:
     - type: docker
       hints.enabled: true
       # default_config must be a map, not a list
       hints.default_config:
         # use filestream (replaces the old "container" input)
-        type: filestream
+        type: container
         paths:
           - "/var/lib/docker/containers/${data.docker.container.id}/*.log"
         processors:
