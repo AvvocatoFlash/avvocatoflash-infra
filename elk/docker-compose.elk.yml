@@ -109,7 +109,7 @@ services:
       kibana:
         condition: service_healthy
     ports:
-      - '127.0.0.1:8200:8200'
+      - "8200:8200"
     volumes:
       - ./config/apm-server.yml:/usr/share/apm-server/apm-server.yml:ro
     networks:
