@@ -4,20 +4,13 @@ set -e
 # 1) Start Elasticsearch in the background
 bash /usr/local/bin/docker-entrypoint.sh &
 
-# 2) Wait until ES is online and index is created
+# 2) Wait until ES is online
 until curl -s -u elastic:"${ELASTIC_PASSWORD}" http://localhost:9200 \
       | grep -q "You Know, for Search"; do
   echo "Still waiting for Elasticsearch…"
   sleep 5
 done
 echo "✅ Elasticsearch is up!"
-
-until curl -s -u elastic:"${ELASTIC_PASSWORD}" http://localhost:9200/_cat/indices \
-    | grep -q ".security-7"; do
-  echo "⏳ Waiting for .security-7 index to be created…"
-  sleep 3
-done
-echo "🔐 Security index is ready!"
 
 # 3) Check for our “once‑and‑done” marker: the kibana_log_writer role
 HTTP_CODE=$(
