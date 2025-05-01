@@ -12,16 +12,16 @@ until curl -s -u elastic:"${ELASTIC_PASSWORD}" http://localhost:9200 \
 done
 echo "✅ Elasticsearch is up!"
 
-## 3) Check for our “once‑and‑done” marker: the custom_monitoring_role role
-#HTTP_CODE=$(
-#  curl -s -o /dev/null -w "%{http_code}" \
-#    -u elastic:"${ELASTIC_PASSWORD}" \
-#    -X GET http://localhost:9200/_security/role/custom_monitoring_role
-#)
-#if [ "$HTTP_CODE" -eq 200 ]; then
-#  echo "⚡️ Security already initialized—skipping user & role setup."
-#else
-#  echo "🚀 Bootstrapping security for the first time…"
+# 3) Check for our “once‑and‑done” marker: the custom_monitoring_role role
+HTTP_CODE=$(
+  curl -s -o /dev/null -w "%{http_code}" \
+    -u elastic:"${ELASTIC_PASSWORD}" \
+    -X GET http://localhost:9200/_security/role/custom_monitoring_role
+)
+if [ "$HTTP_CODE" -eq 200 ]; then
+  echo "⚡️ Security already initialized—skipping user & role setup."
+else
+  echo "🚀 Bootstrapping security for the first time…"
 
   # 4) Reset kibana_system password
   echo "🔐 Resetting kibana_system password…"
