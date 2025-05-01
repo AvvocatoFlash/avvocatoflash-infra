@@ -4,6 +4,7 @@ set -euo pipefail
 # 📄 Set env-specific filenames
 ENV_FILE="elk/.env.elk"
 DOCKER_FILE="elk/docker-compose.elk.yml"
+SECURE_CONFIG_PATH="/tmp/elk-secure-config"
 
 # 📦 Load environment variables
 if [[ ! -f "$ENV_FILE" ]]; then
@@ -13,6 +14,13 @@ fi
 
 echo "📦 Loading environment variables from $ENV_FILE..."
 export $(grep -v '^#' "$ENV_FILE" | xargs)
+
+# 🧹 Clean old root-owned temp configs
+echo "🧹 Cleaning up old secure config..."
+sudo rm -rf "$SECURE_CONFIG_PATH"
+mkdir -p "$SECURE_CONFIG_PATH"
+cp elk/config/*.yml "$SECURE_CONFIG_PATH"
+sudo chown root:root "$SECURE_CONFIG_PATH"/*.yml
 
 # ✅ COMPOSE_PROJECT_NAME now available
 echo "🔧 Project: ${COMPOSE_PROJECT_NAME}"

@@ -15,10 +15,7 @@ services:
       - es-data:/usr/share/elasticsearch/data
       - es-logs:/usr/share/elasticsearch/logs
       - ./elk-entry.sh:/elk-entry.sh
-      - type: bind
-        source: ./config/elasticsearch.yml
-        target: /usr/share/elasticsearch/config/elasticsearch.yml
-        read_only: true
+      - /tmp/elk-secure-config/elasticsearch.yml:/usr/share/elasticsearch/elasticsearch.yml:ro
     restart: unless-stopped
     entrypoint: /elk-entry.sh
     networks:
@@ -41,9 +38,9 @@ services:
       - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
       - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=${KIBANA_ENCRYPTION_KEY}
     volumes:
-      - ./config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+      - /tmp/elk-secure-config/kibana.yml:/usr/share/kibana/kibana.yml:ro
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:5601/api/status || exit 1"]
+      test: [ "CMD-SHELL", "curl -f http://localhost:5601/api/status || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 12
@@ -60,8 +57,8 @@ services:
     volumes:
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
       - filebeat-data:/usr/share/filebeat/data
+      - /tmp/elk-secure-config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
     depends_on:
       - elasticsearch
     environment:
@@ -79,9 +76,9 @@ services:
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./config/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
       - metricbeat-data:/usr/share/metricbeat/data
       - ./modules.d:/usr/share/metricbeat/modules.d:ro
+      - /tmp/elk-secure-config/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
     environment:
       - ELASTICSEARCH_HOSTS=${ELASTICSEARCH_HOSTS}
       - ELASTIC_USERNAME=${ELASTIC_USERNAME}
@@ -115,7 +112,7 @@ services:
     ports:
       - "8200:8200"
     volumes:
-      - ./config/apm-server.yml:/usr/share/apm-server/apm-server.yml:ro
+      - /tmp/elk-secure-config/apm-server.yml:/usr/share/apm-server/apm-server.yml:ro
     networks:
       - internal-net
       - public-net

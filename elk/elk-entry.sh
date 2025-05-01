@@ -16,7 +16,7 @@ echo "✅ Elasticsearch is up!"
 HTTP_CODE=$(
   curl -s -o /dev/null -w "%{http_code}" \
     -u elastic:"${ELASTIC_PASSWORD}" \
-    -X GET http://localhost:9200/_security/role/kibana_log_writer
+    -X GET http://localhost:9200/_security/role/custom_monitoring_role
 )
 if [ "$HTTP_CODE" -eq 200 ]; then
   echo "⚡️ Security already initialized—skipping user & role setup."
