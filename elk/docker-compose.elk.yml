@@ -14,8 +14,11 @@ services:
     volumes:
       - es-data:/usr/share/elasticsearch/data
       - es-logs:/usr/share/elasticsearch/logs
-      - ./config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
       - ./elk-entry.sh:/elk-entry.sh
+      - type: bind
+        source: ./config/elasticsearch.yml
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+        read_only: true
     restart: unless-stopped
     entrypoint: /elk-entry.sh
     networks:
