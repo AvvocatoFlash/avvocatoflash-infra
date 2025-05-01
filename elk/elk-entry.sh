@@ -39,39 +39,39 @@ else
          "indices":[{"names":[".monitoring-*",".kibana*","metricbeat-*","filebeat-*","logs-*"],"privileges":["read","view_index_metadata"]}]
        }'
 
-  echo "🔧 Creating logs_viewer_role…"
-  curl -s -u elastic:"${ELASTIC_PASSWORD}" -X PUT \
-       http://localhost:9200/_security/role/logs_viewer_role \
-       -H "Content-Type: application/json" -d '{
-         "cluster":["monitor"],
-         "indices":[{"names":["logs-*",".logs-*",".kibana*"],"privileges":["read","view_index_metadata"]}]
-       }'
+#  echo "🔧 Creating logs_viewer_role…"
+#  curl -s -u elastic:"${ELASTIC_PASSWORD}" -X PUT \
+#       http://localhost:9200/_security/role/logs_viewer_role \
+#       -H "Content-Type: application/json" -d '{
+#         "cluster":["monitor"],
+#         "indices":[{"names":["logs-*",".logs-*",".kibana*"],"privileges":["read","view_index_metadata"]}]
+#       }'
 
-  # 6) Create kibana_admin user
-  echo "👤 Creating kibana_admin user…"
-  curl -s -u elastic:"${ELASTIC_PASSWORD}" -X POST \
-       http://localhost:9200/_security/user/kibana_admin \
-       -H "Content-Type: application/json" -d '{
-         "password":"'"${KIBANA_SYSTEM_PASSWORD}"'",
-         "roles":["superuser","custom_monitoring_role","logs_viewer_role"],
-         "full_name":"Kibana Admin",
-         "email":"admin@example.com"
-       }'
+#  # 6) Create kibana_admin user
+#  echo "👤 Creating kibana_admin user…"
+#  curl -s -u elastic:"${ELASTIC_PASSWORD}" -X POST \
+#       http://localhost:9200/_security/user/kibana_admin \
+#       -H "Content-Type: application/json" -d '{
+#         "password":"'"${KIBANA_SYSTEM_PASSWORD}"'",
+#         "roles":["superuser","custom_monitoring_role","logs_viewer_role"],
+#         "full_name":"Kibana Admin",
+#         "email":"admin@example.com"
+#       }'
 
-  # 7) Create non‑reserved kibana_log_writer & assign it
-  echo "📝 Creating kibana_log_writer role…"
-  curl -s -u elastic:"${ELASTIC_PASSWORD}" -X PUT \
-       http://localhost:9200/_security/role/kibana_log_writer \
-       -H "Content-Type: application/json" -d '{
-         "cluster":[],
-         "indices":[{"names":["node-logs*"],"privileges":["create_index","create","write"]}]
-       }'
-  echo "🔗 Granting kibana_log_writer to kibana_admin…"
-  curl -s -u elastic:"${ELASTIC_PASSWORD}" -X POST \
-       http://localhost:9200/_security/user/kibana_admin \
-       -H "Content-Type: application/json" -d '{
-         "roles":["superuser","custom_monitoring_role","logs_viewer_role","kibana_log_writer"]
-       }'
+#  # 7) Create non‑reserved kibana_log_writer & assign it
+#  echo "📝 Creating kibana_log_writer role…"
+#  curl -s -u elastic:"${ELASTIC_PASSWORD}" -X PUT \
+#       http://localhost:9200/_security/role/kibana_log_writer \
+#       -H "Content-Type: application/json" -d '{
+#         "cluster":[],
+#         "indices":[{"names":["node-logs*"],"privileges":["create_index","create","write"]}]
+#       }'
+#  echo "🔗 Granting kibana_log_writer to kibana_admin…"
+#  curl -s -u elastic:"${ELASTIC_PASSWORD}" -X POST \
+#       http://localhost:9200/_security/user/kibana_admin \
+#       -H "Content-Type: application/json" -d '{
+#         "roles":["superuser","custom_monitoring_role","logs_viewer_role","kibana_log_writer"]
+#       }'
 
   echo "✅ Security bootstrap complete."
 fi
