@@ -6,3 +6,4 @@ mongo/file.key
 nginx/.env.enginx
 /.idea/
 /config
+/node_modules
