@@ -21,6 +21,8 @@ sudo rm -rf "$SECURE_CONFIG_PATH"
 mkdir -p "$SECURE_CONFIG_PATH"
 cp elk/config/*.yml "$SECURE_CONFIG_PATH"
 sudo chown root:root "$SECURE_CONFIG_PATH"/*.yml
+sudo chmod go-w "$SECURE_CONFIG_PATH"/*.yml
+
 
 # ✅ COMPOSE_PROJECT_NAME now available
 echo "🔧 Project: ${COMPOSE_PROJECT_NAME}"
