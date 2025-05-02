@@ -6,6 +6,8 @@ services:
     ports:
       - '9200:9200'
     environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=true
       - ELASTIC_USERNAME=${ELASTIC_USERNAME}
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       - KIBANA_SYSTEM_USERNAME=${KIBANA_SYSTEM_USERNAME}
