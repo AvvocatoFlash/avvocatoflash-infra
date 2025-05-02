@@ -17,19 +17,11 @@ filebeat.autodiscover:
         paths:
           - "/var/lib/docker/containers/*/*.log"
         processors:
-          # attach all Docker metadata (container name, image, labels…)
-          - add_docker_metadata: {}
-          # decode JSON payload only when there's at least one brace
           - decode_json_fields:
-              fields: ["message"]
-              target: ""               # merge parsed fields at the top level
-              overwrite_keys: true     # allow JSON fields to override root keys
+              fields: [ "message" ]
+              target: ""
+              overwrite_keys: true
               max_depth: 2
-              process_array: false
-              ignore_failure: true     # don’t crash on malformed JSON
-              when:
-                contains:
-                  message: "{"
 
 ###############################
 # 3. Global processors
