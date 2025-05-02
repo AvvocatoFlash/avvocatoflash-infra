@@ -5,7 +5,7 @@ services:
     hostname: mongo1
     command: [ 'bash', '-c', "cp /tmp/file.key /auth.file.key && exec mongod --replSet '${MONGO_REPLICA_SET_NAME}' --bind_ip_all --port 27017 --auth --keyFile /auth.file.key" ]
     ports:
-      - '27017:27017'
+      - '127.0.0.1:27017:27017'
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
@@ -30,7 +30,7 @@ services:
     hostname: mongo2
     command: [ 'bash', '-c', "cp /tmp/file.key /auth.file.key && exec mongod --replSet '${MONGO_REPLICA_SET_NAME}' --bind_ip_all --port 27018 --auth --keyFile /auth.file.key" ]
     ports:
-      - '27018:27018'
+      - '127.0.0.1:27018:27018'
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
@@ -55,7 +55,7 @@ services:
     hostname: mongo3
     command: [ 'bash', '-c', "cp /tmp/file.key /auth.file.key && exec mongod --replSet '${MONGO_REPLICA_SET_NAME}' --bind_ip_all --port 27019 --auth --keyFile /auth.file.key" ]
     ports:
-      - '27019:27019'
+      - '127.0.0.1:27019:27019'
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
