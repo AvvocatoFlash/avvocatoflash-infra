@@ -17,5 +17,5 @@ setup.kibana:
 ################ Elasticsearch output ################
 output.elasticsearch:
   hosts: ["${ELASTICSEARCH_HOSTS}"]
-  username: ${ELASTIC_USERNAME}
-  password: ${ELASTIC_PASSWORD}
+  username: ${APM_USER}
+  password: ${APM_PASSWORD}
