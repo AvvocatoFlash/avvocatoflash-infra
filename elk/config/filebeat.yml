@@ -25,7 +25,7 @@ filebeat.autodiscover:
               target: ""               # merge parsed fields at the top level
               overwrite_keys: true     # allow JSON fields to override root keys
               max_depth: 2
-              process_array: false
+              process_array: true
               ignore_failure: true     # don’t crash on malformed JSON
               when:
                 contains:
