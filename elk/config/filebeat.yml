@@ -15,7 +15,7 @@ filebeat.autodiscover:
         # use filestream (replaces the old "container" input)
         type: filestream
         paths:
-          - "/var/lib/docker/containers/${data.docker.container.id}/*.log"
+          - "/var/lib/docker/containers/*/*.log"
         processors:
           # attach all Docker metadata (container name, image, labels…)
           - add_docker_metadata: {}
