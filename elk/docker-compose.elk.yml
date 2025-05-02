@@ -22,7 +22,8 @@ services:
       - es-data:/usr/share/elasticsearch/data
       - es-logs:/usr/share/elasticsearch/logs
       - ./elk-entry.sh:/elk-entry.sh
-      - /tmp/elk-secure-config/elasticsearch.yml:/usr/share/elasticsearch/elasticsearch.yml:ro
+      - /tmp-config/elk-secure-config/elasticsearch.yml:/usr/share/elasticsearch/elasticsearch.yml:ro
+      - /tmp-modules/modules.d:/usr/share/metricbeat/modules.d:ro
     restart: unless-stopped
     entrypoint: /elk-entry.sh
     networks:
