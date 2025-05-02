@@ -74,7 +74,7 @@ else
 #       }'
 
   echo "✅ Security bootstrap complete."
-#fi
+fi
 
 # 8) Wait on Elasticsearch process so container doesn’t exit
 wait -n
