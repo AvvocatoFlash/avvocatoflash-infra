@@ -27,7 +27,6 @@ filebeat.autodiscover:
               max_depth: 2
               process_array: false
               ignore_failure: true     # don’t crash on malformed JSON
-              ignore_missing: true
               when:
                 contains:
                   message: "{"
