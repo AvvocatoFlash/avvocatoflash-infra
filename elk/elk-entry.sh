@@ -1,79 +1,84 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
-# 1) Start Elasticsearch in the background
+# Start Elasticsearch in the background
 bash /usr/local/bin/docker-entrypoint.sh &
 
-# 2) Wait until ES is online
-until curl -s -u elastic:"${ELASTIC_PASSWORD}" http://localhost:9200 \
+
+# Wait for Elasticsearch to be ready
+echo "⏳ Waiting for Elasticsearch to start..."
+until curl -s -u "${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}" http://localhost:9200 \
       | grep -q "You Know, for Search"; do
   echo "Still waiting for Elasticsearch…"
   sleep 5
 done
 echo "✅ Elasticsearch is up!"
 
-# 3) Check for our “once‑and‑done” marker: the custom_monitoring_role role
-HTTP_CODE=$(
-  curl -s -o /dev/null -w "%{http_code}" \
-    -u elastic:"${ELASTIC_PASSWORD}" \
-    -X GET http://localhost:9200/_security/role/custom_monitoring_role
-)
+# Check if we've already initialized security
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+  -u "${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}" \
+  http://localhost:9200/_security/role/app_monitoring_role)
+
 if [ "$HTTP_CODE" -eq 200 ]; then
-  echo "⚡️ Security already initialized—skipping user & role setup."
+  echo "⚡️ Security already initialized—skipping setup."
 else
-  echo "🚀 Bootstrapping security for the first time…"
+  echo "🚀 Bootstrapping security configuration..."
 
-  # 4) Reset kibana_system password
-  echo "🔐 Resetting kibana_system password…"
-  curl -s -u elastic:"${ELASTIC_PASSWORD}" \
-       -H "Content-Type: application/json" \
-       -X POST http://localhost:9200/_security/user/kibana_system/_password \
-       -d '{"password":"'"${KIBANA_SYSTEM_PASSWORD}"'"}'
 
-  # 5) Create your custom monitoring & logs roles
-  echo "🔧 Creating custom_monitoring_role…"
-  curl -s -u elastic:"${ELASTIC_PASSWORD}" -X PUT \
-       http://localhost:9200/_security/role/custom_monitoring_role \
-       -H "Content-Type: application/json" -d '{
-         "cluster":["monitor","monitor_watcher"],
-         "indices":[{"names":[".monitoring-*",".kibana*","metricbeat-*","filebeat-*","logs-*"],"privileges":["read","view_index_metadata"]}]
-       }'
+  # Setup kibana_system user
+  echo "🔐 Setting up kibana_system user..."
+  curl -s -u "${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}" -X POST \
+    http://localhost:9200/_security/user/kibana_system/_password \
+    -H "Content-Type: application/json" \
+    -d "{\"password\":\"${KIBANA_SYSTEM_PASSWORD}\"}"
 
-#  echo "🔧 Creating logs_viewer_role…"
-#  curl -s -u elastic:"${ELASTIC_PASSWORD}" -X PUT \
-#       http://localhost:9200/_security/role/logs_viewer_role \
-#       -H "Content-Type: application/json" -d '{
-#         "cluster":["monitor"],
-#         "indices":[{"names":["logs-*",".logs-*",".kibana*"],"privileges":["read","view_index_metadata"]}]
-#       }'
+  curl -s -u "${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}" -X PUT \
+    http://localhost:9200/_security/user/kibana_system/_roles \
+    -H "Content-Type: application/json" \
+    -d '["kibana_admin"]'
 
-#  # 6) Create kibana_admin user
-#  echo "👤 Creating kibana_admin user…"
-#  curl -s -u elastic:"${ELASTIC_PASSWORD}" -X POST \
-#       http://localhost:9200/_security/user/kibana_admin \
-#       -H "Content-Type: application/json" -d '{
-#         "password":"'"${KIBANA_SYSTEM_PASSWORD}"'",
-#         "roles":["superuser","custom_monitoring_role","logs_viewer_role"],
-#         "full_name":"Kibana Admin",
-#         "email":"admin@example.com"
-#       }'
+  # Create admin user
+  echo "👤 Creating admin user..."
+  curl -s -u "${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}" -X POST \
+    http://localhost:9200/_security/user/admin \
+    -H "Content-Type: application/json" \
+    -d "{
+      \"password\":\"${ADMIN_PASSWORD}\",
+      \"roles\":[\"superuser\"]
+    }"
 
-#  # 7) Create non‑reserved kibana_log_writer & assign it
-#  echo "📝 Creating kibana_log_writer role…"
-#  curl -s -u elastic:"${ELASTIC_PASSWORD}" -X PUT \
-#       http://localhost:9200/_security/role/kibana_log_writer \
-#       -H "Content-Type: application/json" -d '{
-#         "cluster":[],
-#         "indices":[{"names":["node-logs*"],"privileges":["create_index","create","write"]}]
-#       }'
-#  echo "🔗 Granting kibana_log_writer to kibana_admin…"
-#  curl -s -u elastic:"${ELASTIC_PASSWORD}" -X POST \
-#       http://localhost:9200/_security/user/kibana_admin \
-#       -H "Content-Type: application/json" -d '{
-#         "roles":["superuser","custom_monitoring_role","logs_viewer_role","kibana_log_writer"]
-#       }'
+  # Create APM user
+    echo "🔧 Creating APM user..."
+    curl -s -u "${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}" -X POST \
+      http://localhost:9200/_security/user/${APM_USER} \
+      -H "Content-Type: application/json" \
+      -d "{
+        \"password\":\"${APM_PASSWORD}\",
+        \"roles\":[\"apm_system\"]
+      }"
 
-  echo "✅ Security bootstrap complete."
+  # Create App Monitoring Role
+    echo "🔧 Creating app_monitoring_role..."
+    curl -s -u "${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}" -X PUT \
+      http://localhost:9200/_security/role/app_monitoring_role \
+      -H "Content-Type: application/json" \
+      -d "{
+        \"cluster\":[],
+        \"indices\":[{
+          \"names\":[\"logs-*\",\"app-logs-*\"],
+          \"privileges\":[\"create_index\",\"write\",\"read\"]
+        }]
+      }"
+
+  # Create App User with Monitoring Role
+    echo "👤 Creating app_user..."
+    curl -s -u "${ELASTIC_USERNAME}:${ELASTIC_PASSWORD}" -X POST \
+      http://localhost:9200/_security/user/"${APP_USER}" \
+      -H "Content-Type: application/json" \
+      -d "{
+        \"password\":\"${APP_PASSWORD}\",
+        \"roles\":[\"app_monitoring_role\"]
+      }"
 fi
 
 # 8) Wait on Elasticsearch process so container doesn’t exit

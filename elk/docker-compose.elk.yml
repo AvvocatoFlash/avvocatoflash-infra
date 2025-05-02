@@ -6,11 +6,16 @@ services:
     ports:
       - '9200:9200'
     environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=true
       - ELASTIC_USERNAME=${ELASTIC_USERNAME}
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - KIBANA_SYSTEM_USERNAME=${KIBANA_SYSTEM_USERNAME}
       - KIBANA_SYSTEM_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
+      - ADMIN_USERNAME=${ADMIN_USERNAME}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - APP_USER=${APP_USER}
+      - APP_PASSWORD=${APP_PASSWORD}
+      - APM_USER=${APM_USER}
+      - APM_PASSWORD=${APM_PASSWORD}
     volumes:
       - es-data:/usr/share/elasticsearch/data
       - es-logs:/usr/share/elasticsearch/logs
@@ -38,6 +43,7 @@ services:
       - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
       - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=${KIBANA_ENCRYPTION_KEY}
     volumes:
+      - kibana-data:/usr/share/kibana/data
       - /tmp/elk-secure-config/kibana.yml:/usr/share/kibana/kibana.yml:ro
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:5601/api/status || exit 1" ]
@@ -122,6 +128,7 @@ volumes:
   es-logs:
   filebeat-data:
   metricbeat-data:
+  kibana-data:
 
 networks:
   internal-net:

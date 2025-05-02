@@ -31,8 +31,6 @@ echo "🔧 Compose file: ${DOCKER_FILE}"
 
 echo "🛠️  Environment variables:"
 echo "   COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME:-<not set>}"
-echo "   ELASTIC_PASSWORD=${ELASTIC_PASSWORD:-<not set>}"
-echo "   KIBANA_SYSTEM_PASSWORD=${KIBANA_SYSTEM_PASSWORD:-<not set>}"
 
 # 🧹 Clean previous containers/networks
 echo "🧹 Cleaning up containers and networks for ${COMPOSE_PROJECT_NAME}..."

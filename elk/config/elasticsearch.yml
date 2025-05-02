@@ -2,4 +2,14 @@
 cluster.name: "docker-cluster"
 network.host: 0.0.0.0
 discovery.type: single-node
+
+# Security Settings (already enabled by default in 8.x, but explicit is better)
 xpack.security.enabled: true
+xpack.security.authc.api_key.enabled: true  # Required for APM Server
+xpack.security.transport.ssl.enabled: true   # Keep TLS for transport layer
+xpack.security.http.ssl.enabled: false      # Disable TLS for HTTP (dev only)
+
+# Realm Order (prioritize native realm for local users)
+xpack.security.authc.realms:
+  native_order: 1
+  file_order: 2
