@@ -7,6 +7,7 @@
   "license": "MIT",
   "scripts": {
     "mongo:create-user": "bash ./mongo/mongo-user.sh",
+    "mongo:create-metricbeat-user": "bash ./mongo/mongo-user.sh -u metricbeat -d admin -p metricbeat",
     "deploy:elk": "bash elk/elk-deploy.sh",
     "deploy:mongo": "bash mongo/mongo-deploy.sh",
     "deploy:nginx": "bash nginx/nginx-deploy.sh",

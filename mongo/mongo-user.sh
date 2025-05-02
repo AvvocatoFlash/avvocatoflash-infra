@@ -41,7 +41,12 @@ done
 [[ -z "$USER" || -z "$DB" || -z "$PERM" ]] && usage
 
 # Determine roles
-if [[ "$PERM" == "read" ]]; then
+if [[ "$PERM" == "metricbeat" ]]; then
+  ROLES="[
+    { role: 'clusterMonitor', db: 'admin' },
+    { role: 'read', db: 'local' }
+  ]"
+elif [[ "$PERM" == "read" ]]; then
   ROLES="[{ role: 'read', db: '$DB' }]"
 elif [[ "$PERM" == "write" || "$PERM" == "read:write" ]]; then
   ROLES="[{ role: 'readWrite', db: '$DB' }]"
