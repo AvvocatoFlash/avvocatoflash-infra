@@ -33,8 +33,6 @@ services:
     image: docker.elastic.co/kibana/kibana:8.17.4
     container_name: kibana
     hostname: kibana
-    depends_on:
-      - elasticsearch
     ports:
       - '5601:5601'
     environment:
@@ -47,6 +45,8 @@ services:
     volumes:
       - kibana-data:/usr/share/kibana/data
       - /tmp/elk-secure-config/kibana.yml:/usr/share/kibana/kibana.yml:ro
+    depends_on:
+      - elasticsearch
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:5601/api/status || exit 1" ]
       interval: 10s
@@ -62,6 +62,10 @@ services:
     image: docker.elastic.co/beats/filebeat:8.17.4
     container_name: filebeat
     user: root # need root to read /var/lib/docker
+    environment:
+      - ELASTICSEARCH_HOSTS=${ELASTICSEARCH_HOSTS}
+      - ELASTIC_USERNAME=${ELASTIC_USERNAME}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
     volumes:
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -69,10 +73,6 @@ services:
       - /tmp/elk-secure-config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
     depends_on:
       - elasticsearch
-    environment:
-      - ELASTICSEARCH_HOSTS=${ELASTICSEARCH_HOSTS}
-      - ELASTIC_USERNAME=${ELASTIC_USERNAME}
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
     healthcheck:
       test: [ "CMD-SHELL", "curl -fs http://localhost:5066 || exit 1" ]
       interval: 10s
@@ -87,11 +87,6 @@ services:
     image: docker.elastic.co/beats/metricbeat:8.17.4
     container_name: metricbeat
     user: root # so it can read the Docker socket
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - metricbeat-data:/usr/share/metricbeat/data
-      - /tmp/elk-secure-config/modules.d:/usr/share/metricbeat/modules.d:ro
-      - /tmp/elk-secure-config/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
     environment:
       - ELASTICSEARCH_HOSTS=${ELASTICSEARCH_HOSTS}
       - ELASTIC_USERNAME=${ELASTIC_USERNAME}
@@ -100,6 +95,11 @@ services:
       - KIBANA_SYSTEM_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
       - MONGO_USER=${MONGO_USER}
       - MONGO_PASSWORD=${MONGO_PASSWORD}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - metricbeat-data:/usr/share/metricbeat/data
+      - /tmp/elk-secure-config/modules.d:/usr/share/metricbeat/modules.d:ro
+      - /tmp/elk-secure-config/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
     depends_on:
       elasticsearch:
         condition: service_started
@@ -118,6 +118,8 @@ services:
   apm-server:
     image: docker.elastic.co/apm/apm-server:8.17.4
     container_name: apm-server
+    ports:
+      - "8200:8200"
     environment:
       - ELASTICSEARCH_HOSTS=${ELASTICSEARCH_HOSTS}
       - APM_USER=${APM_USER}
@@ -125,15 +127,19 @@ services:
       - KIBANA_HOST=${KIBANA_HOST}
       - KIBANA_SYSTEM_USERNAME=${KIBANA_SYSTEM_USERNAME}
       - KIBANA_SYSTEM_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
+    volumes:
+      - /tmp/elk-secure-config/apm-server.yml:/usr/share/apm-server/apm-server.yml:ro
     depends_on:
       elasticsearch:
         condition: service_started
       kibana:
         condition: service_healthy
-    ports:
-      - "8200:8200"
-    volumes:
-      - /tmp/elk-secure-config/apm-server.yml:/usr/share/apm-server/apm-server.yml:ro
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -fs http://localhost:8200 || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
     networks:
       - internal-net
       - public-net

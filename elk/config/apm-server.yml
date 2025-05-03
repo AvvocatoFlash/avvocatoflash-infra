@@ -19,3 +19,11 @@ output.elasticsearch:
   hosts: ["${ELASTICSEARCH_HOSTS}"]
   username: ${APM_USER}
   password: ${APM_PASSWORD}
+
+###############################
+# HTTP Monitoring Endpoint
+###############################
+http:
+  enabled: true
+  host: "0.0.0.0"
+  port: 5068
