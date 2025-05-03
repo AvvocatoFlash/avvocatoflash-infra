@@ -1,10 +1,10 @@
 ###############################
-# 1. Turn off any static input
+# Turn off any static input
 ###############################
 filebeat.inputs: []
 
 ###############################
-# 2. Autodiscover Docker logs
+# Autodiscover Docker logs
 ###############################
 filebeat.autodiscover:
   providers:
@@ -33,13 +33,13 @@ filebeat.autodiscover:
                         message: "{"
 
 ###############################
-# 3. Global processors
+# Global processors
 ###############################
 processors:
   - add_docker_metadata: {}
 
 ###############################
-# 4. Elasticsearch output
+# Elasticsearch output
 ###############################
 output.elasticsearch:
   hosts: ["http://elasticsearch:9200"]
@@ -47,6 +47,13 @@ output.elasticsearch:
   password: "${ELASTIC_PASSWORD}"
 
 ###############################
-# 5. Logging
+# Logging
 ###############################
 logging.level: info
+
+###############################
+# HTTP Monitoring Endpoint
+###############################
+http:
+  enabled: true
+  host: "localhost:5066"
