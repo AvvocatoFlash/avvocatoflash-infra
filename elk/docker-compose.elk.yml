@@ -22,7 +22,7 @@ services:
       - es-data:/usr/share/elasticsearch/data
       - es-logs:/usr/share/elasticsearch/logs
       - ./elk-entry.sh:/elk-entry.sh
-      - /tmp/elk-secure-config/elasticsearch.yml:/usr/share/elasticsearch/elasticsearch.yml:ro
+      - /etc/elk-secure-config/elasticsearch.yml:/usr/share/elasticsearch/elasticsearch.yml:ro
     healthcheck:
       test: [ "CMD-SHELL", "curl -fs http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=5s || exit 1" ]
       interval: 10s
@@ -50,7 +50,7 @@ services:
       - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=${KIBANA_ENCRYPTION_KEY}
     volumes:
       - kibana-data:/usr/share/kibana/data
-      - /tmp/elk-secure-config/kibana.yml:/usr/share/kibana/kibana.yml:ro
+      - /etc/elk-secure-config/kibana.yml:/usr/share/kibana/kibana.yml:ro
     depends_on:
       - elasticsearch
     healthcheck:
@@ -76,7 +76,7 @@ services:
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - filebeat-data:/usr/share/filebeat/data
-      - /tmp/elk-secure-config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /etc/elk-secure-config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
     depends_on:
       - elasticsearch
     healthcheck:
@@ -105,8 +105,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - metricbeat-data:/usr/share/metricbeat/data
-      - /tmp/elk-secure-config/modules.d:/usr/share/metricbeat/modules.d:ro
-      - /tmp/elk-secure-config/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+      - /etc/elk-secure-config/modules.d:/usr/share/metricbeat/modules.d:ro
+      - /etc/elk-secure-config/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
     depends_on:
       elasticsearch:
         condition: service_started
@@ -136,7 +136,7 @@ services:
       - KIBANA_SYSTEM_USERNAME=${KIBANA_SYSTEM_USERNAME}
       - KIBANA_SYSTEM_PASSWORD=${KIBANA_SYSTEM_PASSWORD}
     volumes:
-      - /tmp/elk-secure-config/apm-server.yml:/usr/share/apm-server/apm-server.yml:ro
+      - /etc/elk-secure-config/apm-server.yml:/usr/share/apm-server/apm-server.yml:ro
     depends_on:
       elasticsearch:
         condition: service_started
