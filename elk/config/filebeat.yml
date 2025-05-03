@@ -54,8 +54,7 @@ logging.level: info
 ###############################
 # HTTP Monitoring Endpoint
 ###############################
-monitoring:
+http:
   enabled: true
-  http:
-    host: "0.0.0.0"
-    port: 5066
+  host: "0.0.0.0"
+  port: 5066
