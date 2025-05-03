@@ -10,26 +10,27 @@ filebeat.autodiscover:
   providers:
     - type: docker
       hints.enabled: true
-      # default_config must be a map, not a list
-      hints.default_config:
-        # use filestream (replaces the old "container" input)
-        type: filestream
-        paths:
-          - "/var/lib/docker/containers/*/*.log"
-        exclude_files:
-          - "9c0944f97ac302ded714358ff9eac86f1893f8b0bb1973a9a47de27ef8cff7d9-json.log"
-        processors:
-          # attach all Docker metadata (container name, image, labels…)
-          - add_docker_metadata: {}
-          # decode JSON payload only when there's at least one brace
-          - decode_json_fields:
-              fields: ["message"]
-              target: ""               # merge parsed fields at the top level
-              overwrite_keys: true     # allow JSON fields to override root keys
-              max_depth: 2
-              when:
-                contains:
-                  message: "{"
+      templates:
+        - condition:
+            contains:
+              docker.container.image: "*"
+          config:
+            - type: filestream
+              id: docker-logs-${data.docker.container.id}
+              paths:
+                - "/var/lib/docker/containers/${data.docker.container.id}/*.log"
+              exclude_files:
+                - "9c0944f97ac302ded714358ff9eac86f1893f8b0bb1973a9a47de27ef8cff7d9-json.log"
+              processors:
+                - add_docker_metadata: {}
+                - decode_json_fields:
+                    fields: ["message"]
+                    target: ""
+                    overwrite_keys: true
+                    max_depth: 2
+                    when:
+                      contains:
+                        message: "{"
 
 ###############################
 # 3. Global processors
@@ -41,7 +42,7 @@ processors:
 # 4. Elasticsearch output
 ###############################
 output.elasticsearch:
-  hosts: ["${ELASTICSEARCH_HOSTS}"]
+  hosts: ["http://elasticsearch:9200"]
   username: "${ELASTIC_USERNAME}"
   password: "${ELASTIC_PASSWORD}"
 
