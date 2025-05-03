@@ -16,6 +16,8 @@ filebeat.autodiscover:
         type: filestream
         paths:
           - "/var/lib/docker/containers/*/*.log"
+        exclude_files:
+          - "9c0944f97ac302ded714358ff9eac86f1893f8b0bb1973a9a47de27ef8cff7d9-json.log"
         processors:
           # attach all Docker metadata (container name, image, labels…)
           - add_docker_metadata: {}
@@ -48,4 +50,4 @@ output.elasticsearch:
 ###############################
 # 5. Debug logging
 ###############################
-logging.level: debug
+logging.level: info
