@@ -87,7 +87,6 @@ services:
     image: docker.elastic.co/beats/metricbeat:8.17.4
     container_name: metricbeat
     user: root # so it can read the Docker socket
-    restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - metricbeat-data:/usr/share/metricbeat/data
@@ -106,6 +105,12 @@ services:
         condition: service_started
       kibana:
         condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -fs http://localhost:5067 || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
     networks:
       - internal-net
       - public-net
