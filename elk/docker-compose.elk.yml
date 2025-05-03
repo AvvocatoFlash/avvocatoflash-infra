@@ -27,8 +27,8 @@ services:
       test: [ "CMD-SHELL", "curl -fs http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=5s || exit 1" ]
       interval: 10s
       timeout: 5s
-      retries: 12
-      start_period: 30s
+      retries: 10
+      start_period: 10s
     restart: unless-stopped
     entrypoint: /elk-entry.sh
     networks:
@@ -57,8 +57,8 @@ services:
       test: [ "CMD-SHELL", "curl -f http://localhost:5601/api/status || exit 1" ]
       interval: 10s
       timeout: 5s
-      retries: 12
-      start_period: 30s
+      retries: 10
+      start_period: 10s
     restart: unless-stopped
     networks:
       - internal-net
@@ -116,8 +116,8 @@ services:
       test: [ "CMD-SHELL", "curl -fs http://localhost:5067 || exit 1" ]
       interval: 10s
       timeout: 5s
-      retries: 12
-      start_period: 30s
+      retries: 10
+      start_period: 10s
     restart: unless-stopped
     networks:
       - internal-net

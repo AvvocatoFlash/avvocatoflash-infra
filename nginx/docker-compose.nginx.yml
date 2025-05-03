@@ -16,8 +16,8 @@ services:
       test: [ "CMD-SHELL", "timeout 2 bash -c '</dev/tcp/localhost/443' || exit 1" ]
       interval: 10s
       timeout: 5s
-      retries: 12
-      start_period: 30s
+      retries: 10
+      start_period: 10s
     restart: unless-stopped
     networks:
       - internal-net
