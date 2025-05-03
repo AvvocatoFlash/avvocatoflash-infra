@@ -50,10 +50,3 @@ output.elasticsearch:
 # Logging
 ###############################
 logging.level: info
-
-###############################
-# HTTP Monitoring Endpoint
-###############################
-http:
-  enabled: true
-  host: "localhost:5066"
