@@ -19,7 +19,7 @@ services:
     healthcheck:
       test: [
         "CMD-SHELL",
-        "mongosh admin -u $MONGODB_ROOT_USER -p $MONGODB_ROOT_PASSWORD --eval 'db.runCommand({ ping: 1 }).ok' --quiet | grep -q 1"
+        "mongosh admin --port 27017 --eval 'db.runCommand({ ping: 1 }).ok' --quiet"
       ]
       interval: 10s
       timeout: 5s
@@ -47,7 +47,7 @@ services:
     healthcheck:
       test: [
         "CMD-SHELL",
-        "mongosh admin -u $MONGODB_ROOT_USER -p $MONGODB_ROOT_PASSWORD --eval 'db.runCommand({ ping: 1 }).ok' --quiet | grep -q 1"
+        "mongosh admin --port 27018 --eval 'db.runCommand({ ping: 1 }).ok' --quiet"
       ]
       interval: 10s
       timeout: 5s
@@ -75,7 +75,7 @@ services:
     healthcheck:
       test: [
         "CMD-SHELL",
-        "mongosh admin -u $MONGODB_ROOT_USER -p $MONGODB_ROOT_PASSWORD --eval 'db.runCommand({ ping: 1 }).ok' --quiet | grep -q 1"
+        "mongosh admin --port 27019 --eval 'db.runCommand({ ping: 1 }).ok' --quiet"
       ]
       interval: 10s
       timeout: 5s
