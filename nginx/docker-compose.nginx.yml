@@ -15,11 +15,11 @@ services:
     extra_hosts:
       - 'host.docker.internal:172.17.0.1'
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:80/']
-      interval: 10s # keep checking every 10 seconds
-      timeout: 5s # fail after 5s if no response
-      retries: 10 # after 10 failures, mark as unhealthy
-      start_period: 10s # optional: grace period at container start
+      test: ["CMD-SHELL", "curl -fs --insecure https://localhost/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
     restart: unless-stopped
     networks:
       - internal-net
