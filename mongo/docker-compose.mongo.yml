@@ -17,7 +17,10 @@ services:
       - /tmp
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD-SHELL","echo 'rs.status().ok' | mongo admin --port 27017 -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet | grep -q 1" ]
+      test: [
+        "CMD-SHELL",
+        "mongosh admin -u $MONGODB_ROOT_USER -p $MONGODB_ROOT_PASSWORD --eval 'db.runCommand({ ping: 1 }).ok' --quiet | grep -q 1"
+      ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -42,7 +45,10 @@ services:
       - /tmp
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD-SHELL","echo 'rs.status().ok' | mongo admin --port 27018 -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet | grep -q 1" ]
+      test: [
+        "CMD-SHELL",
+        "mongosh admin -u $MONGODB_ROOT_USER -p $MONGODB_ROOT_PASSWORD --eval 'db.runCommand({ ping: 1 }).ok' --quiet | grep -q 1"
+      ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -67,7 +73,10 @@ services:
       - /tmp
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD-SHELL","echo 'rs.status().ok' | mongo admin --port 27019 -u $${MONGO_INITDB_ROOT_USERNAME} -p $${MONGO_INITDB_ROOT_PASSWORD} --quiet | grep -q 1" ]
+      test: [
+        "CMD-SHELL",
+        "mongosh admin -u $MONGODB_ROOT_USER -p $MONGODB_ROOT_PASSWORD --eval 'db.runCommand({ ping: 1 }).ok' --quiet | grep -q 1"
+      ]
       interval: 10s
       timeout: 5s
       retries: 5
